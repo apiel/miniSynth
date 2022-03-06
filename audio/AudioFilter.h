@@ -59,6 +59,7 @@ private:
     AudioMixer4 mixer;
     AudioSynthWaveformDc dc;
     AudioFilterStateVariable filter;
+    // AudioFilterBiquad filter;
     AudioConnection *patchCordFilter[FILTER_TYPE_COUNT];
     AudioConnection *patchCordInput;
     AudioConnection *patchCordOutput;
@@ -68,9 +69,9 @@ public:
     AudioDumb input;
     AudioEffectEnvelope env;
 
-    byte filterFrequencyPos = 90;
-    float filterFrequency = 0.0;
-    byte filterResonance = 0;
+    byte cutoffPos = 90;
+    float cutoff = 0.0;
+    byte resonance = 0;
     byte currentFilter = 0;
 
     AudioFilter()
@@ -119,38 +120,38 @@ public:
 
     void setCutoff(byte value)
     {
-        filterFrequencyPos = value * 2;
-        filterFrequency = FILTERFREQS256[filterFrequencyPos];
-        filter.frequency(filterFrequency);
+        cutoffPos = value * 2;
+        cutoff = FILTERFREQS256[cutoffPos];
+        filter.frequency(cutoff);
 
-        if (filterFrequency <= 2000)
+        if (cutoff <= 2000)
         {
             filter.octaveControl(
-                4.0f + ((2000.0f - filterFrequency) / 710.0f)); // More bass
+                4.0f + ((2000.0f - cutoff) / 710.0f)); // More bass
         }
-        else if (filterFrequency > 2000 && filterFrequency <= 3500)
+        else if (cutoff > 2000 && cutoff <= 3500)
         {
-            filter.octaveControl(3.0f + ((3500.0f - filterFrequency) /
+            filter.octaveControl(3.0f + ((3500.0f - cutoff) /
                                          1500.0f)); // Sharper cutoff
         }
-        else if (filterFrequency > 3500 && filterFrequency <= 7000)
+        else if (cutoff > 3500 && cutoff <= 7000)
         {
-            filter.octaveControl(2.0f + ((7000.0f - filterFrequency) /
+            filter.octaveControl(2.0f + ((7000.0f - cutoff) /
                                          4000.0f)); // Sharper cutoff
         }
         else
         {
-            filter.octaveControl(1.0f + ((12000.0f - filterFrequency) /
+            filter.octaveControl(1.0f + ((12000.0f - cutoff) /
                                          5100.0f)); // Sharper cutoff
         }
     }
 
     void setResonance(byte value)
     {
-        // filterResonance = value;
-        // filter.resonance((13.9f * POWER[filterResonance]) + 1.1f);
-        filterResonance = value;
-        filter.resonance((13.9f * ((float)filterResonance) / 127.0f) + 1.1f);
+        // resonancePos = value;
+        // filter.resonance((13.9f * POWER[resonancePos]) + 1.1f);
+        resonance = value;
+        filter.resonance((13.9f * ((float)resonance) / 127.0f) + 1.1f);
     }
 };
 
