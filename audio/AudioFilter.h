@@ -56,102 +56,110 @@ const static float POWER[128] = {
 class AudioFilter : public AudioDumb
 {
 private:
-    AudioMixer4 mixer;
-    AudioSynthWaveformDc dc;
-    AudioFilterStateVariable filter;
-    // AudioFilterBiquad filter;
-    AudioConnection *patchCordFilter[FILTER_TYPE_COUNT];
+    // AudioMixer4 mixer;
+    // AudioSynthWaveformDc dc;
+    // AudioFilterStateVariable filter;
+    AudioFilterBiquad filter;
+    // AudioConnection *patchCordFilter[FILTER_TYPE_COUNT];
     AudioConnection *patchCordInput;
     AudioConnection *patchCordOutput;
-    AudioConnection *patchCordDcToFilter;
+    // AudioConnection *patchCordDcToFilter;
 
 public:
     AudioDumb input;
     AudioEffectEnvelope env;
 
-    byte cutoffPos = 90;
+    byte cutoffPos = 127;
     float cutoff = 0.0;
-    byte resonance = 0;
+    byte resonancePos = 127;
+    float resonance = 1.0;
     byte currentFilter = 0;
 
     AudioFilter()
     {
         patchCordInput = new AudioConnection(input, filter);
-        patchCordFilter[0] = new AudioConnection(filter, 0, mixer, 0);
-        patchCordFilter[1] = new AudioConnection(filter, 1, mixer, 1);
-        patchCordFilter[2] = new AudioConnection(filter, 2, mixer, 2);
-        patchCordFilter[3] = new AudioConnection(input, 0, mixer, 3);
-        patchCordOutput = new AudioConnection(mixer, *this);
+        // patchCordFilter[0] = new AudioConnection(filter, 0, mixer, 0);
+        // patchCordFilter[1] = new AudioConnection(filter, 1, mixer, 1);
+        // patchCordFilter[2] = new AudioConnection(filter, 2, mixer, 2);
+        // patchCordFilter[3] = new AudioConnection(input, 0, mixer, 3);
+        // patchCordOutput = new AudioConnection(mixer, *this);
+        // patchCordDcToFilter = new AudioConnection(dc, 0, filter, 1);
 
-        patchCordDcToFilter = new AudioConnection(dc, 0, filter, 1);
+        patchCordOutput = new AudioConnection(filter, *this);
 
-        setCurrentFilter(1);
-        setCutoff(127);
-        setResonance(0);
+        // setCurrentFilter(1);
+        setCutoff(cutoffPos);
+        setResonance(resonancePos);
 
-        dc.amplitude(0.0);
+        // dc.amplitude(0.0);
     }
 
-    void setCurrentFilter(int8_t direction)
-    {
-        currentFilter = mod(currentFilter + direction, FILTER_TYPE_COUNT);
+    // void setCurrentFilter(int8_t direction)
+    // {
+    //     currentFilter = mod(currentFilter + direction, FILTER_TYPE_COUNT);
 
-        mixer.gain(0, 0.0);
-        mixer.gain(1, 0.0);
-        mixer.gain(2, 0.0);
-        mixer.gain(3, 0.0);
+    //     mixer.gain(0, 0.0);
+    //     mixer.gain(1, 0.0);
+    //     mixer.gain(2, 0.0);
+    //     mixer.gain(3, 0.0);
 
-        switch (currentFilter)
-        {
-        case 0:
-            mixer.gain(0, 1.0);
-            break;
-        case 1:
-            mixer.gain(1, 1.0);
-            break;
-        case 2:
-            mixer.gain(2, 1.0);
-            break;
-        default:
-            mixer.gain(3, 1.0);
-            break;
-        }
-    }
+    //     switch (currentFilter)
+    //     {
+    //     case 0:
+    //         mixer.gain(0, 1.0);
+    //         break;
+    //     case 1:
+    //         mixer.gain(1, 1.0);
+    //         break;
+    //     case 2:
+    //         mixer.gain(2, 1.0);
+    //         break;
+    //     default:
+    //         mixer.gain(3, 1.0);
+    //         break;
+    //     }
+    // }
 
     void setCutoff(byte value)
     {
         cutoffPos = value * 2;
         cutoff = FILTERFREQS256[cutoffPos];
-        filter.frequency(cutoff);
+        filter.setLowpass(0, cutoff, resonance);
 
-        if (cutoff <= 2000)
-        {
-            filter.octaveControl(
-                4.0f + ((2000.0f - cutoff) / 710.0f)); // More bass
-        }
-        else if (cutoff > 2000 && cutoff <= 3500)
-        {
-            filter.octaveControl(3.0f + ((3500.0f - cutoff) /
-                                         1500.0f)); // Sharper cutoff
-        }
-        else if (cutoff > 3500 && cutoff <= 7000)
-        {
-            filter.octaveControl(2.0f + ((7000.0f - cutoff) /
-                                         4000.0f)); // Sharper cutoff
-        }
-        else
-        {
-            filter.octaveControl(1.0f + ((12000.0f - cutoff) /
-                                         5100.0f)); // Sharper cutoff
-        }
+        // filter.frequency(cutoff);
+
+        // if (cutoff <= 2000)
+        // {
+        //     filter.octaveControl(
+        //         4.0f + ((2000.0f - cutoff) / 710.0f)); // More bass
+        // }
+        // else if (cutoff > 2000 && cutoff <= 3500)
+        // {
+        //     filter.octaveControl(3.0f + ((3500.0f - cutoff) /
+        //                                  1500.0f)); // Sharper cutoff
+        // }
+        // else if (cutoff > 3500 && cutoff <= 7000)
+        // {
+        //     filter.octaveControl(2.0f + ((7000.0f - cutoff) /
+        //                                  4000.0f)); // Sharper cutoff
+        // }
+        // else
+        // {
+        //     filter.octaveControl(1.0f + ((12000.0f - cutoff) /
+        //                                  5100.0f)); // Sharper cutoff
+        // }
     }
 
     void setResonance(byte value)
     {
         // resonancePos = value;
         // filter.resonance((13.9f * POWER[resonancePos]) + 1.1f);
-        resonance = value;
-        filter.resonance((13.9f * ((float)resonance) / 127.0f) + 1.1f);
+        resonancePos = value;
+        // resonance = ((float)resonancePos) / 127.0f;
+        resonance = ((float)resonancePos) / 127.0f * 2;
+        // resonance = (float)resonancePos;
+        // filter.resonance((13.9f * ((float)resonance) / 127.0f) + 1.1f);
+        filter.setLowpass(0, cutoff, resonance);
     }
 };
 
