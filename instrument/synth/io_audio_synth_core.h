@@ -22,10 +22,10 @@ public:
 
     byte lastNote = 0;
 
-    float asr[3] = {10.0, 1.0, 50.0};
+    float attackMs = 10.0;
+    float releaseMs = 50.0;
 
     byte currentWave = WAVEFORM_SINE;
-    float frequency = 120.0;
     float amplitude = 1.0;
 
     AudioConnection *patchCordWaveToEnv;
@@ -43,12 +43,11 @@ public:
         patchCordDistortionToOutput = new AudioConnection(distortion, *this);
 
         env.hold(0);
-        env.attack(asr[0]); // ms
+        env.attack(attackMs); // ms
         env.decay(0);
-        env.sustain(asr[1]); // level
-        env.release(asr[2]); // ms
+        env.sustain(1.0); // level
+        env.release(releaseMs); // ms
 
-        wave.frequency(frequency);
         wave.amplitude(amplitude);
         wave.arbitraryWaveform(table.table, 172.0);
         wave.begin(currentWave);
@@ -58,20 +57,20 @@ public:
 
     void setAttack(byte value)
     {
-        asr[0] = 10.0f * value;
-        env.attack(asr[0]);
+        attackMs = 10.0f * value;
+        env.attack(attackMs);
     }
 
     void setLevel(byte value)
     {
-        asr[1] = ((float)value) / 127.0f;
-        env.sustain(asr[1]);
+        amplitude = ((float)value) / 127.0f;
+        wave.amplitude(amplitude);
     }
 
     void setRelease(byte value)
     {
-        asr[2] = 20.0f * value;
-        env.release(asr[2]);
+        releaseMs = 20.0f * value;
+        env.release(releaseMs);
     }
 
     void noteOn(byte note, byte velocity)

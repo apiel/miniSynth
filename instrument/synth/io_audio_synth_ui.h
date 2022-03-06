@@ -23,7 +23,7 @@ public:
         d->clearDisplay();
         d->setCursor(0, 0);
 
-        d->printf("%s %.1fHz\n", getWave(core->currentWave), core->frequency);
+        d->printf("%s\n", getWave(core->currentWave));
         // d->printf("%d%% %d|%d|%d%%|%d\n", (int)(core->amplitude * 100.0),
         //           (int)core->adsr[0], (int)core->adsr[1],
         //           (int)(core->adsr[2] * 100.0), (int)core->adsr[3]);
