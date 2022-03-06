@@ -24,9 +24,9 @@ public:
         d->setCursor(0, 0);
 
         d->printf("%s %.1fHz\n", getWave(core->currentWave), core->frequency);
-        d->printf("%d%% %d|%d|%d%%|%d\n", (int)(core->amplitude * 100.0),
-                  (int)core->adsr[0], (int)core->adsr[1],
-                  (int)(core->adsr[2] * 100.0), (int)core->adsr[3]);
+        // d->printf("%d%% %d|%d|%d%%|%d\n", (int)(core->amplitude * 100.0),
+        //           (int)core->adsr[0], (int)core->adsr[1],
+        //           (int)(core->adsr[2] * 100.0), (int)core->adsr[3]);
 
         addToCursor(d, 0, 4);
         d->printf("%s %.1fHz %d\n", getFilter(core->filter.currentFilter),
@@ -64,22 +64,16 @@ public:
         core->noteOff(note);
     }
 
-    void controlChangeHandler(byte channel, byte knob, int8_t direction)
+    void controlChangeHandler(byte channel, byte knob, int8_t direction, byte value)
     {
-        if (channel == 11)
-        {
-            // if (knob == 1) {
-            //     if (mcMode) {
-            //         core->filter.setCurrentFilter(direction);
-            //     } else {
-            //         core->setNextWave(direction);
-            //     }
-            // } else if (knob == 2) {
-            //     if (mcMode) {
-            //         core->filter.setFilterFrequency(direction);
-            //     } else {
-            //         core->setFrequency(direction);
-            //     }
+            if (knob == 1) {
+                core->setLevel(value);
+            } else if (knob == 2) {
+                core->setAttack(value);
+            } else if (knob == 16) {
+                core->setRelease(value);
+            }
+
             // } else if (knob == 3) {
             //     if (mcMode) {
             //         core->filter.setFilterResonance(direction);
@@ -150,7 +144,6 @@ public:
             //     } else {
             //     }
             // }
-        }
     }
 };
 

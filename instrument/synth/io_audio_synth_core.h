@@ -11,9 +11,10 @@
 #include "../../io_util.h"
 #include "../../wavetable/guitar01.h"
 
-class IO_AudioSynthCore : public AudioDumb {
-   protected:
-   public:
+class IO_AudioSynthCore : public AudioDumb
+{
+protected:
+public:
     AudioSynthWaveform wave;
     AudioEffectEnvelope env;
     AudioEffectDistortion distortion;
@@ -21,30 +22,31 @@ class IO_AudioSynthCore : public AudioDumb {
 
     byte lastNote = 0;
 
-    float adsr[4] = {10.0, 50.0, 1.0, 50.0};
+    float asr[3] = {10.0, 1.0, 50.0};
 
     byte currentWave = WAVEFORM_SINE;
     float frequency = 120.0;
     float amplitude = 1.0;
 
-    AudioConnection* patchCordWaveToEnv;
-    AudioConnection* patchCordEnvToFilter;
-    AudioConnection* patchCordFilterToDistortion;
-    AudioConnection* patchCordDistortionToOutput;
+    AudioConnection *patchCordWaveToEnv;
+    AudioConnection *patchCordEnvToFilter;
+    AudioConnection *patchCordFilterToDistortion;
+    AudioConnection *patchCordDistortionToOutput;
 
     Guitar01 table;
 
-    IO_AudioSynthCore() {
+    IO_AudioSynthCore()
+    {
         patchCordWaveToEnv = new AudioConnection(wave, env);
         patchCordEnvToFilter = new AudioConnection(env, filter.input);
         patchCordFilterToDistortion = new AudioConnection(filter, distortion);
         patchCordDistortionToOutput = new AudioConnection(distortion, *this);
 
         env.hold(0);
-        env.attack(adsr[0]);
-        env.decay(adsr[1]);
-        env.sustain(adsr[2]);
-        env.release(adsr[3]);
+        env.attack(asr[0]); // ms
+        env.decay(0);
+        env.sustain(asr[1]); // level
+        env.release(asr[2]); // ms
 
         wave.frequency(frequency);
         wave.amplitude(amplitude);
@@ -54,7 +56,26 @@ class IO_AudioSynthCore : public AudioDumb {
         distortion.distortion(0.5);
     }
 
-    void noteOn(byte note, byte velocity) {
+    void setAttack(byte value)
+    {
+        asr[0] = 10.0f * value;
+        env.attack(asr[0]);
+    }
+
+    void setLevel(byte value)
+    {
+        asr[1] = ((float)value) / 127.0f;
+        env.sustain(asr[1]);
+    }
+
+    void setRelease(byte value)
+    {
+        asr[2] = 20.0f * value;
+        env.release(asr[2]);
+    }
+
+    void noteOn(byte note, byte velocity)
+    {
         lastNote = note;
 
         // float _amp = amplitude * velocity / 127;
@@ -67,8 +88,10 @@ class IO_AudioSynthCore : public AudioDumb {
         filter.env.noteOn();
     }
 
-    void noteOff(byte note) {
-        if (note == lastNote) {
+    void noteOff(byte note)
+    {
+        if (note == lastNote)
+        {
             env.noteOff();
             filter.env.noteOff();
         }
