@@ -84,7 +84,7 @@ public:
         wave.frequency(NOTE_FREQ[note]);
 
         env.noteOn();
-        filter.env.noteOn();
+        // filter.env.noteOn();
     }
 
     void noteOff(byte note)
@@ -92,7 +92,7 @@ public:
         if (note == lastNote)
         {
             env.noteOff();
-            filter.env.noteOff();
+            // filter.env.noteOff();
         }
     }
 };

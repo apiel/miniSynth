@@ -29,12 +29,12 @@ public:
         //           (int)(core->adsr[2] * 100.0), (int)core->adsr[3]);
 
         addToCursor(d, 0, 4);
-        d->printf("%s %.1fHz %d\n", getFilter(core->filter.currentFilter),
-                  core->filter.filterFrequency, core->filter.filterResonance);
-        d->printf("%.1f %d|%d|%d%%|%d\n", core->filter.dcValue,
-                  (int)core->filter.adsr[0], (int)core->filter.adsr[1],
-                  (int)(core->filter.adsr[2] * 100.0),
-                  (int)core->filter.adsr[3]);
+        // d->printf("%s %.1fHz %d\n", getFilter(core->filter.currentFilter),
+        //           core->filter.filterFrequency, core->filter.filterResonance);
+        // d->printf("%.1f %d|%d|%d%%|%d\n", core->filter.dcValue,
+        //           (int)core->filter.adsr[0], (int)core->filter.adsr[1],
+        //           (int)(core->filter.adsr[2] * 100.0),
+        //           (int)core->filter.adsr[3]);
         d->printf("Dist %d range %d\n", (int)core->distortion.amount,
                   (int)core->distortion.range);
     }
@@ -72,6 +72,10 @@ public:
                 core->setAttack(value);
             } else if (knob == 16) {
                 core->setRelease(value);
+            } else if (knob == 17) {
+                core->filter.setCutoff(value);
+            } else if (knob == 13) {
+                core->filter.setResonance(value);
             }
 
             // } else if (knob == 3) {
