@@ -53,6 +53,10 @@ const static float POWER[128] = {
     0.778f, 0.792f, 0.806f, 0.82f, 0.834f, 0.849f, 0.863f, 0.878f,
     0.893f, 0.908f, 0.923f, 0.938f, 0.953f, 0.969f, 0.984f, 1.0f};
 
+// some stuff
+// https://github.com/vinniefalco/DSPFilters/tree/master/shared/DSPFilters/source
+// https://github.com/corbanbrook/dsp.js/
+
 class AudioFilter : public AudioDumb
 {
 private:
