@@ -28,6 +28,7 @@ public:
         do
         {
             uint32_t input = *data;
+            // Serial.printf("in %d\n", input);
             float x = f0b * input + f0state;
             f0state = -f0b * input + f0a * x;
 
@@ -39,12 +40,8 @@ public:
             f2state[0] = f2state[1] - f2a[0] * y2;
             f2state[1] = -f2a[1] * y2;
 
-            *data = vca_a * y2;
+            *data = y2;
             data++;
-            // *data = vca_a * y2;
-            // data++;
-
-            vca_a += (0.5 - vca_a) * (1.0 - 0.94406088);
         } while (data < end);
 
         transmit(block);
@@ -83,7 +80,6 @@ private:
     float vcf_cutoff = 0;
     float vcf_envmod = 0;
     float vcf_reso = 0;
-    float vca_a = 0;
 
     byte resoIdx = 0;
 
@@ -101,7 +97,7 @@ private:
 
         float w = vcf_e0 + vcf_e1;
 
-        float reso_k = vcf_reso * 4.0;               // feedback strength
+        float reso_k = vcf_reso * 4.0; // feedback strength
 
         f0a = exp(filterpoles[0][resoIdx] + w * filterpoles[1][resoIdx]);
         float exp_p1r = exp(filterpoles[2][resoIdx] + w * filterpoles[4][resoIdx]);
@@ -120,6 +116,9 @@ private:
         f2a[0] = -2 * exp_p2r * cos(p2i);
         f2a[1] = exp_p2r * exp_p2r;
         f2b = 1 + f2a[0] + f2a[1];
+
+        // Serial.printf("vcf_cutoff %.6f vcf_envmod %.6f resoIdx %d vcf_reso %.6f\n",vcf_cutoff, vcf_envmod, (int)resoIdx, vcf_reso);
+        // Serial.printf("f0a %.6f f0b %.6f f1a[0] %.6f f1a[1] %.6f f1b %.6f f2a[0] %.6f f2a[1] %.6f f2b %.6f\n", f0a, f0b, f1a[0], f1a[1], f1b, f2a[0], f2a[1], f2b);
     }
 
     const float filterpoles[10][64] = {
