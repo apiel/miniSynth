@@ -9,6 +9,7 @@ class AudioFilter303 : public AudioStream
 public:
     AudioFilter303(void) : AudioStream(1, inputQueueArray)
     {
+        recalcParams();
     }
 
     void update(void)
@@ -22,13 +23,10 @@ public:
         }
 
         uint32_t *end = (uint32_t *)(block->data) + AUDIO_BLOCK_SAMPLES / 2;
-        uint32_t *data = end - AUDIO_BLOCK_SAMPLES / 2;
+        uint32_t *data = (uint32_t *)(block->data);
+
         do
         {
-            if (vcf_envpos >= ENVINC)
-            {
-                recalcFilter();
-            }
             uint32_t input = *data;
             float x = f0b * input + f0state;
             f0state = -f0b * input + f0a * x;
@@ -41,33 +39,35 @@ public:
             f2state[0] = f2state[1] - f2a[0] * y2;
             f2state[1] = -f2a[1] * y2;
 
-            vcf_envpos++;
             *data = vca_a * y2;
-            vca_a += (0.5 - vca_a) * (1.0 - 0.94406088);
-
             data++;
+            // *data = vca_a * y2;
+            // data++;
+
+            vca_a += (0.5 - vca_a) * (1.0 - 0.94406088);
         } while (data < end);
 
         transmit(block);
         release(block);
     }
 
-    // should this be byte ?
-    void setCutoff(float value)
+    void setCutoff(byte value)
     {
-        vcf_cutoff = value;
+        vcf_cutoff = value / 127.0f;
         recalcParams();
     }
 
-    void setReso(float value)
+    void setResonance(byte value)
     {
-        vcf_reso = value;
+        vcf_reso = value / 127.0f;
+        resoIdx = value / 2;
+
         recalcParams();
     }
 
-    void setEnvMod(float value)
+    void setEnvMod(byte value)
     {
-        vcf_envmod = value;
+        vcf_envmod = value / 127.0f;
         recalcParams();
     }
 
@@ -75,8 +75,6 @@ private:
     audio_block_t *inputQueueArray[1];
 
     const int sample_rate = 44100; // f_smp
-    const byte ENVINC = 64;
-    byte vcf_envpos = ENVINC;
 
     float f0state = 0.0;
     float f1state[2] = {0.0, 0.0};
@@ -85,17 +83,9 @@ private:
     float vcf_cutoff = 0;
     float vcf_envmod = 0;
     float vcf_reso = 0;
-    float vcf_e1;
-    float vcf_e0;
     float vca_a = 0;
 
-    void recalcParams()
-    {
-        vcf_e0 = (exp(5.22617147 + 1.70418937 * vcf_cutoff - 0.68382928 * vcf_envmod) + 103) * (2 * PI) / sample_rate;
-        vcf_e1 = ((exp(5.55921003 + 2.17788267 * vcf_cutoff + 1.99224351 * vcf_envmod) + 103) * (2 * PI) / sample_rate) - vcf_e0;
-
-        vcf_envpos = ENVINC;
-    }
+    byte resoIdx = 0;
 
     float f0b;     // filter 0 numerator coefficients
     float f0a;     // filter 0 denominator coefficients
@@ -104,13 +94,13 @@ private:
     float f2b = 1; // filter 2 numerator, same
     float f2a[2];  // filter 2 denominator coefficients
 
-    void recalcFilter()
+    void recalcParams()
     {
+        float vcf_e0 = (exp(5.22617147 + 1.70418937 * vcf_cutoff - 0.68382928 * vcf_envmod) + 103) * (2 * PI) / sample_rate;
+        float vcf_e1 = ((exp(5.55921003 + 2.17788267 * vcf_cutoff + 1.99224351 * vcf_envmod) + 103) * (2 * PI) / sample_rate) - vcf_e0;
+
         float w = vcf_e0 + vcf_e1;
 
-        // maybe this cast is not working
-        // might be easier to use 127 byte value
-        byte resoIdx = 0 | ((int16_t)vcf_reso * 63); // 64 slot available in filterpoles
         float reso_k = vcf_reso * 4.0;               // feedback strength
 
         f0a = exp(filterpoles[0][resoIdx] + w * filterpoles[1][resoIdx]);
@@ -130,8 +120,6 @@ private:
         f2a[0] = -2 * exp_p2r * cos(p2i);
         f2a[1] = exp_p2r * exp_p2r;
         f2b = 1 + f2a[0] + f2a[1];
-
-        vcf_envpos = 0;
     }
 
     const float filterpoles[10][64] = {
