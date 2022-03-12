@@ -59,14 +59,14 @@ class IO_AudioBase {
         coreUI->noteOffHandler(channel, note, velocity);
     }
 
-    void controlChangeHandler(byte channel, byte knob, int8_t direction, byte value) {
+    void controlChangeHandler(byte channel, byte control, int8_t direction, byte value) {
         switch (currentView) {
             // case VIEW_SEQ:
-            //     seqUI->controlChangeHandler(channel, knob, direction);
+            //     seqUI->controlChangeHandler(channel, control, direction);
             //     break;
 
             case VIEW_CORE:
-                coreUI->controlChangeHandler(channel, knob, direction, value);
+                coreUI->controlChangeHandler(channel, control, direction, value);
                 break;
         }
     }

@@ -12,9 +12,6 @@
 
 class IO_AudioSynthCoreUI
 {
-private:
-    IO_AudioSynthCore *core;
-
 public:
     IO_AudioSynthCoreUI(IO_AudioSynthCore *_core) { core = _core; }
 
@@ -64,95 +61,92 @@ public:
         core->noteOff(note);
     }
 
-    void controlChangeHandler(byte channel, byte knob, int8_t direction, byte value)
+    void controlChangeHandler(byte channel, byte control, int8_t direction, byte value)
     {
-            if (knob == 1) {
-                core->setLevel(value);
-            } else if (knob == 2) {
-                core->setAttack(value);
-            } else if (knob == 16) {
-                core->setRelease(value);
-            } else if (knob == 17) {
-                core->filter.setCutoff(value);
-            } else if (knob == 13) {
+        if (control == 64)
+        {
+            // mode = value == 127;
+            mode = value != 127;
+        }
+        else if (mode)
+        {
+            // bottom row
+            if (control == 13)
+            {
+                core->currentWave = (value / 127.0f) * 13;
+                Serial.printf("currentWaveform %d\n", core->currentWave);
+
+                AudioNoInterrupts();
+                core->wave.begin(core->currentWave);
+                AudioInterrupts();
+            }
+            else if (control == 14)
+            {
+                core->wave.offset((value / 127.0f * 2) - 1);
+            }
+            else if (control == 15)
+            {
+                core->wave.phase(value / 127.0f * 360.0f);
+            }
+            else if (control == 16)
+            {
+                core->wave.pulseWidth(value / 127.0f);
+            }
+            // top row
+            else if (control == 17)
+            {
+            }
+            else if (control == 18)
+            {
+            }
+            else if (control == 19)
+            {
+            }
+            else if (control == 20)
+            {
+            }
+        }
+        else
+        {
+            // bottom row
+            if (control == 13)
+            {
                 core->filter.setResonance(value);
-            } else if (knob == 0) {
-                core->filterLadder.setCutoff(value);
-            } else if (knob == 14) {
+            }
+            else if (control == 14)
+            {
                 core->filterLadder.setResonance(value);
             }
-
-            // } else if (knob == 3) {
-            //     if (mcMode) {
-            //         core->filter.setFilterResonance(direction);
-            //     } else {
-            //         core->setAmplitude(direction);
-            //     }
-            // } else if (knob == 4) {
-            //     if (mcMode) {
-            //         core->filter.setDc(direction);
-            //     } else {
-            //     }
-            // } else if (knob == 5) {
-            //     if (mcMode) {
-            //         core->filter.setAttack(direction);
-            //     } else {
-            //         core->setAttack(direction);
-            //     }
-            // } else if (knob == 6) {
-            //     if (mcMode) {
-            //         core->filter.setDecay(direction);
-            //     } else {
-            //         core->setDecay(direction);
-            //     }
-            // } else if (knob == 7) {
-            //     if (mcMode) {
-            //         core->filter.setSustain(direction);
-            //     } else {
-            //         core->setSustain(direction);
-            //     }
-            // } else if (knob == 8) {
-            //     if (mcMode) {
-            //         core->filter.setRelease(direction);
-            //     } else {
-            //         core->setRelease(direction);
-            //     }
-            // } else if (knob == 11) {
-            //     if (mcMode) {
-            //         core->setDistortion(direction);
-            //     } else {
-            //     }
-            // } else if (knob == 12) {
-            //     if (mcMode) {
-            //         core->setDistortionRange(direction);
-            //     } else {
-            //     }
-            // } else if (knob == 13) {
-            //     if (mcMode) {
-            //     } else {
-            //     }
-            // } else if (knob == 14) {
-            //     if (mcMode) {
-            //     } else {
-            //     }
-            // } else if (knob == 15) {
-            //     if (mcMode) {
-            //     } else {
-            //     }
-            // } else if (knob == 16) {
-            //     if (mcMode) {
-            //     } else {
-            //     }
-            // } else if (knob == 17) {
-            //     if (mcMode) {
-            //     } else {
-            //     }
-            // } else if (knob == 0) {  // 0 for 18
-            //     if (mcMode) {
-            //     } else {
-            //     }
-            // }
+            else if (control == 15)
+            {
+            }
+            else if (control == 16)
+            {
+                core->setRelease(value);
+            }
+            // top row
+            else if (control == 17)
+            {
+                core->filter.setCutoff(value);
+            }
+            else if (control == 18)
+            {
+                core->filterLadder.setCutoff(value);
+            }
+            else if (control == 19)
+            {
+                core->setLevel(value);
+            }
+            else if (control == 20)
+            {
+                core->setAttack(value);
+            }
+        }
     }
+
+private:
+    IO_AudioSynthCore *core;
+    bool mode = false;
 };
 
 #endif

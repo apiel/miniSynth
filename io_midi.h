@@ -45,13 +45,11 @@ void controlChangeHandler(byte channel, byte control, byte value)
     Serial.print(channel, DEC);
     Serial.print(", control=");
     Serial.print(control, DEC);
-    Serial.print(", knob=");
-    Serial.print(knob, DEC);
     Serial.print(", value=");
     Serial.println(value, DEC);
 
-    int8_t direction = getKnobDirection(knob, value);
-    getSynth()->controlChangeHandler(channel, knob, direction, value);
+    int8_t direction = getKnobDirection(control, value);
+    getSynth()->controlChangeHandler(channel, control, direction, value);
     displayUpdate();
 }
 
