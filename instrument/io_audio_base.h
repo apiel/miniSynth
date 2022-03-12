@@ -5,6 +5,8 @@
 #include <Arduino.h>
 #include <Audio.h>
 
+#include "./io_audio_loop.h"
+
 template<class AudioCore = void, class AudioCoreUI = void>
 class IO_AudioBase {
    protected:
@@ -13,6 +15,7 @@ class IO_AudioBase {
 
    public:
     AudioCoreUI* coreUI;
+    IO_AudioLoop<AudioCore>* loop;
 
     void init() {  }
 
