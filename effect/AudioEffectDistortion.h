@@ -20,6 +20,8 @@ class AudioEffectDistortion : public AudioEffectWaveshaper {
     AudioEffectDistortion(void) { distortion(50); };
 
     void update() {
+        // should it just return the block if amount is 0 instead to have this toggle feature...
+        // or have a main effect selector
         if (bypassed || amount == 0) {
             audio_block_t *block;
             block = AudioStream::receiveReadOnly();

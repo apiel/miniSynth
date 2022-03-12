@@ -35,8 +35,8 @@ public:
         //           (int)core->filter.adsr[0], (int)core->filter.adsr[1],
         //           (int)(core->filter.adsr[2] * 100.0),
         //           (int)core->filter.adsr[3]);
-        d->printf("Dist %d range %d\n", (int)core->distortion.amount,
-                  (int)core->distortion.range);
+        // d->printf("Dist %d range %d\n", (int)core->distortion.amount,
+        //           (int)core->distortion.range);
     }
 
     void noteOnHandler(byte channel, byte note, byte velocity)

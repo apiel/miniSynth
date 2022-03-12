@@ -4,8 +4,8 @@
 #include <Arduino.h>
 #include <Audio.h>
 
-#include "../../audio/AudioFilter.h"
 #include "../../audio/audio_dumb.h"
+#include "../../audio/AudioFilter.h"
 #include "../../audio/note.h"
 #include "../../effect/AudioEffectDistortion.h"
 #include "../../io_util.h"
@@ -17,42 +17,48 @@ protected:
 public:
     AudioSynthWaveform wave;
     AudioEffectEnvelope env;
-    AudioEffectDistortion distortion;
+    // AudioEffectDistortion distortion;
     AudioFilter filter;
+    AudioFilterLadder filterLadder;
 
     byte lastNote = 0;
 
     float attackMs = 10.0;
     float releaseMs = 50.0;
 
-    byte currentWave = WAVEFORM_SINE;
+    byte currentWave = WAVEFORM_SAWTOOTH;
     float amplitude = 1.0;
 
     AudioConnection *patchCordWaveToEnv;
     AudioConnection *patchCordEnvToFilter;
-    AudioConnection *patchCordFilterToDistortion;
-    AudioConnection *patchCordDistortionToOutput;
+    AudioConnection *patchCordFilterToFilterLadder;
+    AudioConnection *patchCordFilterLadderToOutput;
+    // AudioConnection *patchCordFilterToDistortion;
+    // AudioConnection *patchCordDistortionToOutput;
 
     Guitar01 table;
 
     IO_AudioSynthCore()
     {
         patchCordWaveToEnv = new AudioConnection(wave, env);
-        patchCordEnvToFilter = new AudioConnection(env, filter.input);
-        patchCordFilterToDistortion = new AudioConnection(filter, distortion);
-        patchCordDistortionToOutput = new AudioConnection(distortion, *this);
+        patchCordEnvToFilter = new AudioConnection(env, filter);
+        patchCordFilterToFilterLadder = new AudioConnection(filter, filterLadder);
+        patchCordFilterLadderToOutput = new AudioConnection(filterLadder, *this);
+
+        // patchCordFilterToDistortion = new AudioConnection(filter, distortion);
+        // patchCordDistortionToOutput = new AudioConnection(distortion, *this);
 
         env.hold(0);
         env.attack(attackMs); // ms
         env.decay(0);
-        env.sustain(1.0); // level
+        env.sustain(1.0);       // level
         env.release(releaseMs); // ms
 
         wave.amplitude(amplitude);
         wave.arbitraryWaveform(table.table, 172.0);
         wave.begin(currentWave);
 
-        distortion.distortion(0.5);
+        // distortion.distortion(0.0);
     }
 
     void setAttack(byte value)
