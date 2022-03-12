@@ -1,16 +1,16 @@
-#ifndef AudioFilter_h_
-#define AudioFilter_h_
+#ifndef IO_AUDIO_FILTER_H_
+#define IO_AUDIO_FILTER_H_
 
 #include <Arduino.h>
 #include <Audio.h>
 
-class AudioFilter : public AudioFilterStateVariable
+class IO_AudioFilter : public AudioFilterStateVariable
 {
 public:
     byte cutoffPos = 127;
     byte resonancePos = 0;
 
-    AudioFilter() : AudioFilterStateVariable()
+    IO_AudioFilter() : AudioFilterStateVariable()
     {
         setCutoff(cutoffPos);
         setResonance(resonancePos);

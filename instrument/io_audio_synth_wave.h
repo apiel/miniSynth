@@ -4,18 +4,18 @@
 #include <Arduino.h>
 #include <Audio.h>
 
-#include "../audio/audio_dumb.h"
+#include "../audio/io_audio_dumb.h"
 #include "../audio/note.h"
 #include "../io_util.h"
 #include "../wavetable/AudioWaveTable.h"
 #include "../wavetable/AudioWaveTableList.h"
 
-class IO_AudioSynthWave : public AudioDumb {
+class IO_AudioSynthWave : public IO_AudioDumb {
    public:
     AudioWaveTable waveTable;
     AudioSynthWaveformModulated waveForm;
     AudioWaveTableList waveList;
-    AudioDumb input;
+    IO_AudioDumb input;
 
     uint16_t currentWave = 0;
     char* waveName;

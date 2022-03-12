@@ -76,6 +76,10 @@ public:
                 core->filter.setCutoff(value);
             } else if (knob == 13) {
                 core->filter.setResonance(value);
+            } else if (knob == 0) {
+                core->filterLadder.setCutoff(value);
+            } else if (knob == 14) {
+                core->filterLadder.setResonance(value);
             }
 
             // } else if (knob == 3) {

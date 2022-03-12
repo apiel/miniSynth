@@ -4,22 +4,23 @@
 #include <Arduino.h>
 #include <Audio.h>
 
-#include "../../audio/audio_dumb.h"
-#include "../../audio/AudioFilter.h"
+#include "../../audio/io_audio_dumb.h"
+#include "../../audio/io_audio_filter.h"
+#include "../../audio/io_audio_filter_ladder.h"
 #include "../../audio/note.h"
 #include "../../effect/AudioEffectDistortion.h"
 #include "../../io_util.h"
 #include "../../wavetable/guitar01.h"
 
-class IO_AudioSynthCore : public AudioDumb
+class IO_AudioSynthCore : public IO_AudioDumb
 {
 protected:
 public:
     AudioSynthWaveform wave;
     AudioEffectEnvelope env;
     // AudioEffectDistortion distortion;
-    AudioFilter filter;
-    AudioFilterLadder filterLadder;
+    IO_AudioFilter filter;
+    IO_AudioFilterLadder filterLadder;
 
     byte lastNote = 0;
 
