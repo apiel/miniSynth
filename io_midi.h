@@ -73,6 +73,7 @@ void midiInit()
     myusb.begin();
     for (byte n = 0; n < MIDI_COUNT; n++)
     {
+        // Serial.printf("idProduct %d manufacturer %d serialNumber %d idVendor %d\n", midi[n].idProduct(), midi[n].manufacturer(), midi[n].serialNumber(), midi[n].idVendor());
         midi[n].setHandleNoteOn(noteOnHandler);
         midi[n].setHandleNoteOff(noteOffHandler);
         midi[n].setHandleControlChange(controlChangeHandler);

@@ -20,7 +20,8 @@ public:
     {
         cutoffPos = value;
         float freqVal = value / 127.0f;
-        frequency(freqVal * freqVal * 4000.0f);
+        // +200 as in lowpass too low freq would less nothing pass, if use high pass might need to make a max freq instead
+        frequency((freqVal * freqVal * 6000.0f) + 200.0f);
     }
 
     void setResonance(byte value)
