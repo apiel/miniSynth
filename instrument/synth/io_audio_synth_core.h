@@ -8,6 +8,7 @@
 #include "../../audio/io_audio_filter.h"
 #include "../../audio/io_audio_filter_ladder.h"
 #include "../../audio/io_audio_waveform.h"
+#include "../../audio/io_audio_env.h"
 #include "../../audio/note.h"
 #include "../../effect/AudioEffectDistortion.h"
 #include "../../io_util.h"
@@ -17,15 +18,12 @@ class IO_AudioSynthCore : public IO_AudioDumb
 protected:
 public:
     IO_AudioWaveform wave;
-    AudioEffectEnvelope env;
+    IO_AudioEnv env;
     // AudioEffectDistortion distortion;
     IO_AudioFilter filter;
     IO_AudioFilterLadder filterLadder;
 
     byte lastNote = 0;
-
-    float attackMs = 10.0;
-    float releaseMs = 50.0;
 
     float level = 127;
 
@@ -46,22 +44,10 @@ public:
         // patchCordFilterToDistortion = new AudioConnection(filter, distortion);
         // patchCordDistortionToOutput = new AudioConnection(distortion, *this);
 
-        env.hold(0);
-        env.attack(attackMs); // ms
-        env.decay(0);
-        env.sustain(1.0);       // level
-        env.release(releaseMs); // ms
-
         setLevel(level);
         wave.begin();
 
         // distortion.distortion(0.0);
-    }
-
-    void setAttack(byte value)
-    {
-        attackMs = 10.0f * value;
-        env.attack(attackMs);
     }
 
     void setLevel(byte value)
@@ -70,12 +56,6 @@ public:
         // could also use envelop substain level?
         // seem the amplitude to be more clean
         wave.amplitude(((float)level) / 127.0f);
-    }
-
-    void setRelease(byte value)
-    {
-        releaseMs = 20.0f * value;
-        env.release(releaseMs);
     }
 
     void noteOn(byte note, byte velocity)

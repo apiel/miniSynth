@@ -116,7 +116,7 @@ public:
             }
             else if (control == 16)
             {
-                core->setRelease(value);
+                core->env.setRelease(value);
             }
             // top row
             else if (control == 17)
@@ -132,7 +132,7 @@ public:
             }
             else if (control == 20)
             {
-                core->setAttack(value);
+                core->env.setAttack(value);
             }
         }
     }
