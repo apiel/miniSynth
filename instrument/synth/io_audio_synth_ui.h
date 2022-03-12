@@ -20,7 +20,7 @@ public:
         d->clearDisplay();
         d->setCursor(0, 0);
 
-        d->printf("%s\n", getWave(core->currentWave));
+        d->printf("%s\n", core->wave.getName());
         // d->printf("%d%% %d|%d|%d%%|%d\n", (int)(core->amplitude * 100.0),
         //           (int)core->adsr[0], (int)core->adsr[1],
         //           (int)(core->adsr[2] * 100.0), (int)core->adsr[3]);
@@ -65,32 +65,25 @@ public:
     {
         if (control == 64)
         {
-            // mode = value == 127;
-            mode = value != 127;
+            mode = value == 127;
+            // mode = value != 127;
         }
         else if (mode)
         {
             // bottom row
             if (control == 13)
             {
-                core->currentWave = (value / 127.0f) * 13;
-                Serial.printf("currentWaveform %d\n", core->currentWave);
-
-                AudioNoInterrupts();
-                core->wave.begin(core->currentWave);
-                AudioInterrupts();
+                core->wave.setWaveform(value);
             }
             else if (control == 14)
             {
-                core->wave.offset((value / 127.0f * 2) - 1);
+                core->wave.edit(value);
             }
             else if (control == 15)
             {
-                core->wave.phase(value / 127.0f * 360.0f);
             }
             else if (control == 16)
             {
-                core->wave.pulseWidth(value / 127.0f);
             }
             // top row
             else if (control == 17)
@@ -104,6 +97,7 @@ public:
             }
             else if (control == 20)
             {
+                core->setLevel(value);
             }
         }
         else
@@ -135,7 +129,6 @@ public:
             }
             else if (control == 19)
             {
-                core->setLevel(value);
             }
             else if (control == 20)
             {

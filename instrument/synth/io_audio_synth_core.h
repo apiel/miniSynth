@@ -7,16 +7,16 @@
 #include "../../audio/io_audio_dumb.h"
 #include "../../audio/io_audio_filter.h"
 #include "../../audio/io_audio_filter_ladder.h"
+#include "../../audio/io_audio_waveform.h"
 #include "../../audio/note.h"
 #include "../../effect/AudioEffectDistortion.h"
 #include "../../io_util.h"
-#include "../../wavetable/guitar01.h"
 
 class IO_AudioSynthCore : public IO_AudioDumb
 {
 protected:
 public:
-    AudioSynthWaveform wave;
+    IO_AudioWaveform wave;
     AudioEffectEnvelope env;
     // AudioEffectDistortion distortion;
     IO_AudioFilter filter;
@@ -27,8 +27,7 @@ public:
     float attackMs = 10.0;
     float releaseMs = 50.0;
 
-    byte currentWave = WAVEFORM_SAWTOOTH;
-    float amplitude = 1.0;
+    float level = 127;
 
     AudioConnection *patchCordWaveToEnv;
     AudioConnection *patchCordEnvToFilter;
@@ -36,8 +35,6 @@ public:
     AudioConnection *patchCordFilterLadderToOutput;
     // AudioConnection *patchCordFilterToDistortion;
     // AudioConnection *patchCordDistortionToOutput;
-
-    Guitar01 table;
 
     IO_AudioSynthCore()
     {
@@ -55,9 +52,8 @@ public:
         env.sustain(1.0);       // level
         env.release(releaseMs); // ms
 
-        wave.amplitude(amplitude);
-        wave.arbitraryWaveform(table.table, 172.0);
-        wave.begin(currentWave);
+        setLevel(level);
+        wave.begin();
 
         // distortion.distortion(0.0);
     }
@@ -70,8 +66,10 @@ public:
 
     void setLevel(byte value)
     {
-        amplitude = ((float)value) / 127.0f;
-        wave.amplitude(amplitude);
+        level = value;
+        // could also use envelop substain level?
+        // seem the amplitude to be more clean
+        wave.amplitude(((float)level) / 127.0f);
     }
 
     void setRelease(byte value)

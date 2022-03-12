@@ -40,7 +40,6 @@ void noteOffHandler(byte channel, byte note, byte velocity)
 
 void controlChangeHandler(byte channel, byte control, byte value)
 {
-    byte knob = control % KNOB_COUNT;
     Serial.print("Control Change, ch=");
     Serial.print(channel, DEC);
     Serial.print(", control=");
