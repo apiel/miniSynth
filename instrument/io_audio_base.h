@@ -23,9 +23,9 @@ public:
 
     void init() {}
 
-    void display(Adafruit_SSD1306 *d)
+    void display(Adafruit_SSD1306 *d, unsigned int * forceRefreshIn)
     {
-        coreUI->display(d);
+        coreUI->display(d, forceRefreshIn);
     }
 
     void noteOnHandler(byte channel, byte note, byte velocity)

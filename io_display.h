@@ -38,6 +38,7 @@ void displayInit()
 
 unsigned long lastDisplayUpdate = millis();
 bool needDisplayUpdate = false;
+unsigned int forceRefreshIn = 0;
 
 void displayUpdate()
 {
@@ -45,7 +46,7 @@ void displayUpdate()
     {
         needDisplayUpdate = false;
         lastDisplayUpdate = millis();
-        getSynth()->display(&display);
+        getSynth()->display(&display, &forceRefreshIn);
         display.display();
     }
     else
@@ -58,6 +59,9 @@ void displayLoop()
 {
     if (needDisplayUpdate)
     {
+        displayUpdate();
+    } else if (forceRefreshIn && millis() - lastDisplayUpdate > forceRefreshIn) {
+        forceRefreshIn = 0;
         displayUpdate();
     }
 }

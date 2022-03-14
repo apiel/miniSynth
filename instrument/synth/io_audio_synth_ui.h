@@ -14,25 +14,39 @@ class IO_AudioSynthCoreUI
 public:
     IO_AudioSynthCoreUI(IO_AudioSynthCore *_core) { core = _core; }
 
-    void display(Adafruit_SSD1306 *d)
+    void display(Adafruit_SSD1306 *d, unsigned int * forceRefreshIn)
     {
         d->clearDisplay();
         d->setCursor(0, 0);
 
-        d->printf("%s\n", core->wave.getName());
-        // d->printf("%d%% %d|%d|%d%%|%d\n", (int)(core->amplitude * 100.0),
-        //           (int)core->adsr[0], (int)core->adsr[1],
-        //           (int)(core->adsr[2] * 100.0), (int)core->adsr[3]);
+        if (displayVal)
+        {
+            d->printf("Value\n%d\n", displayVal);
+            displayVal = 0;
+            *forceRefreshIn = 1000;
+        }
+        else
+        {
+            d->printf("%s\n", core->wave.getName());
+            // d->printf("%d%% %d|%d|%d%%|%d\n", (int)(core->amplitude * 100.0),
+            //           (int)core->adsr[0], (int)core->adsr[1],
+            //           (int)(core->adsr[2] * 100.0), (int)core->adsr[3]);
 
-        addToCursor(d, 0, 4);
-        // d->printf("%s %.1fHz %d\n", getFilter(core->filter.currentFilter),
-        //           core->filter.filterFrequency, core->filter.filterResonance);
-        // d->printf("%.1f %d|%d|%d%%|%d\n", core->filter.dcValue,
-        //           (int)core->filter.adsr[0], (int)core->filter.adsr[1],
-        //           (int)(core->filter.adsr[2] * 100.0),
-        //           (int)core->filter.adsr[3]);
-        // d->printf("Dist %d range %d\n", (int)core->distortion.amount,
-        //           (int)core->distortion.range);
+            addToCursor(d, 0, 4);
+            // d->printf("%s %.1fHz %d\n", getFilter(core->filter.currentFilter),
+            //           core->filter.filterFrequency, core->filter.filterResonance);
+            // d->printf("%.1f %d|%d|%d%%|%d\n", core->filter.dcValue,
+            //           (int)core->filter.adsr[0], (int)core->filter.adsr[1],
+            //           (int)(core->filter.adsr[2] * 100.0),
+            //           (int)core->filter.adsr[3]);
+            // d->printf("Dist %d range %d\n", (int)core->distortion.amount,
+            //           (int)core->distortion.range);
+        }
+    }
+
+    void displayValue(byte value)
+    {
+        displayVal = value;
     }
 
     void noteOnHandler(byte channel, byte note, byte velocity)
@@ -90,6 +104,7 @@ public:
             if (control == 13)
             {
                 core->filter.setResonance(value);
+                displayValue(value);
             }
             else if (control == 14)
             {
@@ -124,6 +139,7 @@ public:
 private:
     IO_AudioSynthCore *core;
     bool mode = false;
+    byte displayVal = 0;
 };
 
 #endif
