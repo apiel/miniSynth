@@ -19,10 +19,10 @@ public:
         d->clearDisplay();
         d->setCursor(0, 0);
 
-        if (displayVal)
+        if (displayValName)
         {
-            d->printf("Value\n%d\n", displayVal);
-            displayVal = 0;
+            d->printf("%s\n%d\n", displayValName, displayVal);
+            displayValName = NULL;
             *forceRefreshIn = 1000;
         }
         else
@@ -44,9 +44,10 @@ public:
         }
     }
 
-    void displayValue(byte value)
+    void displayValue(const char * name, byte value)
     {
         displayVal = value;
+        displayValName = name;
     }
 
     void noteOnHandler(byte channel, byte note, byte velocity)
@@ -104,7 +105,7 @@ public:
             if (control == 13)
             {
                 core->filter.setResonance(value);
-                displayValue(value);
+                displayValue("Resonnance", value);
             }
             else if (control == 14)
             {
@@ -140,6 +141,7 @@ private:
     IO_AudioSynthCore *core;
     bool mode = false;
     byte displayVal = 0;
+    const char * displayValName = NULL;
 };
 
 #endif
