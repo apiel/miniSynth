@@ -14,7 +14,7 @@ class IO_AudioSynthCoreUI
 public:
     IO_AudioSynthCoreUI(IO_AudioSynthCore *_core) { core = _core; }
 
-    void display(Adafruit_SSD1306 *d, unsigned int * forceRefreshIn)
+    void display(Adafruit_SSD1306 *d, unsigned int *forceRefreshIn)
     {
         d->clearDisplay();
         d->setCursor(0, 0);
@@ -27,7 +27,16 @@ public:
             d->println(displayVal);
             d->setTextSize(1);
             displayValName = NULL;
-            *forceRefreshIn = 1000;
+            *forceRefreshIn = 2000;
+        }
+        else if (msValName)
+        {
+            d->println(msValName);
+            d->setTextSize(3);
+            d->printf("\n%dms\n", msVal);
+            d->setTextSize(1);
+            msValName = NULL;
+            *forceRefreshIn = 2000;
         }
         else
         {
@@ -48,10 +57,16 @@ public:
         }
     }
 
-    void displayValue(const char * name, byte value)
+    void displayValue(const char *name, byte value)
     {
         displayVal = value;
         displayValName = name;
+    }
+
+    void displayMs(const char *name, unsigned int value)
+    {
+        msVal = value;
+        msValName = name;
     }
 
     void noteOnHandler(byte channel, byte note, byte velocity)
@@ -124,6 +139,7 @@ public:
             else if (control == 16)
             {
                 core->env.setRelease(value);
+                displayMs("Env. Release", core->env.releaseMs);
             }
             // top row
             else if (control == 17)
@@ -142,6 +158,7 @@ public:
             else if (control == 20)
             {
                 core->env.setAttack(value);
+                displayMs("Env. Attack", core->env.attackMs);
             }
         }
     }
@@ -150,7 +167,10 @@ private:
     IO_AudioSynthCore *core;
     bool mode = false;
     byte displayVal = 0;
-    const char * displayValName = NULL;
+    const char *displayValName = NULL;
+
+    unsigned int msVal = 0;
+    const char *msValName = NULL;
 };
 
 #endif

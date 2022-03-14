@@ -56,6 +56,9 @@ public:
                 // add note difference to note
                 lastStep.note += (int)play - (int)REF_NOTE;
                 core->noteOn(lastStep.note, lastStep.velocity);
+                // could have mode with no substain here
+                // and directly noteOff
+                // for drum?
             }
         }
         currentStep = (currentStep + 1) % pattern->stepCount;
