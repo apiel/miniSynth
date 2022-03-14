@@ -21,13 +21,15 @@ public:
 
     void setAttack(byte value)
     {
-        attackMs = 10.0f * value;
+        attackMs = 5.0f * value;
+        // Serial.printf("setAttack %.6f\n", attackMs);
         attack(attackMs);
     }
 
     void setRelease(byte value)
     {
-        releaseMs = 20.0f * value;
+        releaseMs = 1.0f * value * value;
+        // Serial.printf("setRelease %.6f\n", releaseMs);
         release(releaseMs);
     }
 };
