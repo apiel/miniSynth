@@ -21,7 +21,11 @@ public:
 
         if (displayValName)
         {
-            d->printf("%s\n%d\n", displayValName, displayVal);
+            d->println(displayValName);
+            d->println("");
+            d->setTextSize(6);
+            d->println(displayVal);
+            d->setTextSize(1);
             displayValName = NULL;
             *forceRefreshIn = 1000;
         }
@@ -77,6 +81,7 @@ public:
             else if (control == 14)
             {
                 core->wave.edit(value);
+                displayValue("Wave edit", value);
             }
             else if (control == 15)
             {
@@ -97,6 +102,7 @@ public:
             else if (control == 20)
             {
                 core->setLevel(value);
+                displayValue("Level", value);
             }
         }
         else
@@ -110,6 +116,7 @@ public:
             else if (control == 14)
             {
                 core->filterLadder.setResonance(value);
+                displayValue("Ladder Resonnance", value);
             }
             else if (control == 15)
             {
@@ -122,10 +129,12 @@ public:
             else if (control == 17)
             {
                 core->filter.setCutoff(value);
+                displayValue("Cutoff", value);
             }
             else if (control == 18)
             {
                 core->filterLadder.setCutoff(value);
+                displayValue("Ladder Cutoff", value);
             }
             else if (control == 19)
             {
