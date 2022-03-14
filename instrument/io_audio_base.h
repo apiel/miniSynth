@@ -7,70 +7,94 @@
 
 #include "./io_audio_loop.h"
 
-template<class AudioCore = void, class AudioCoreUI = void>
-class IO_AudioBase {
-   protected:
-    enum { VIEW_CORE, VIEW_SEQ, VIEW_COUNT };
+template <class AudioCore = void, class AudioCoreUI = void>
+class IO_AudioBase
+{
+protected:
+    enum
+    {
+        VIEW_CORE,
+        VIEW_SEQ,
+        VIEW_COUNT
+    };
     byte currentView = VIEW_CORE;
 
-   public:
-    AudioCoreUI* coreUI;
-    IO_AudioLoop<AudioCore>* loop;
+public:
+    AudioCoreUI *coreUI;
+    IO_AudioLoop<AudioCore> *loop;
 
-    void init() {  }
+    byte currentPattern = 0;
+    Pattern *pattern;
 
-    void display(Adafruit_SSD1306* d) {
-        switch (currentView) {
+    void init() {}
+
+    void display(Adafruit_SSD1306 *d)
+    {
+        switch (currentView)
+        {
             // case VIEW_SEQ:
             //     seqUI->display(d);
             //     break;
 
-            default:
-                coreUI->display(d);
-                break;
+        default:
+            coreUI->display(d);
+            break;
         }
         // display playing status on all the views
         // seqUI->displayPlayingStatus(d);
     }
 
-    void setCurrentView(int8_t direction) {
+    void setCurrentView(int8_t direction)
+    {
         currentView = mod(currentView + direction, VIEW_COUNT);
         // Serial.printf("Current view %d\n", currentView);
     }
 
-    void noteOnHandler(byte channel, byte note, byte velocity) {
-        if (note == 18 || note == 42) {
+    void noteOnHandler(byte channel, byte note, byte velocity)
+    {
+        if (note == 18 || note == 42)
+        {
             setCurrentView(-1);
-        } else if (note == 19 || note == 43) {
+        }
+        else if (note == 19 || note == 43)
+        {
             setCurrentView(1);
-        } else if (note == 22 || note == 46) {
+        }
+        else if (note == 22 || note == 46)
+        {
             // seq->toggle();
-        } else {
-            switch (currentView) {
+        }
+        else
+        {
+            switch (currentView)
+            {
                 // case VIEW_SEQ:
                 //     seqUI->noteOnHandler(channel, note, velocity);
                 //     break;
 
-                case VIEW_CORE:
-                    coreUI->noteOnHandler(channel, note, velocity);
-                    break;
+            case VIEW_CORE:
+                coreUI->noteOnHandler(channel, note, velocity);
+                break;
             }
         }
     }
 
-    void noteOffHandler(byte channel, byte note, byte velocity) {
+    void noteOffHandler(byte channel, byte note, byte velocity)
+    {
         coreUI->noteOffHandler(channel, note, velocity);
     }
 
-    void controlChangeHandler(byte channel, byte control, int8_t direction, byte value) {
-        switch (currentView) {
+    void controlChangeHandler(byte channel, byte control, int8_t direction, byte value)
+    {
+        switch (currentView)
+        {
             // case VIEW_SEQ:
             //     seqUI->controlChangeHandler(channel, control, direction);
             //     break;
 
-            case VIEW_CORE:
-                coreUI->controlChangeHandler(channel, control, direction, value);
-                break;
+        case VIEW_CORE:
+            coreUI->controlChangeHandler(channel, control, direction, value);
+            break;
         }
     }
 };

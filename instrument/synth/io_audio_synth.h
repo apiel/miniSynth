@@ -8,6 +8,7 @@
 #include "../io_audio_base.h"
 #include "./io_audio_synth_core.h"
 #include "./io_audio_synth_ui.h"
+#include "../io_audio_loop.h"
 
 class IO_AudioSynth
     : public IO_AudioSynthCore,
@@ -15,6 +16,7 @@ class IO_AudioSynth
    public:
     IO_AudioSynth() {
         coreUI = new IO_AudioSynthCoreUI(this);
+        loop = new IO_AudioLoop<IO_AudioSynthCore>(this);
     }
 };
 
