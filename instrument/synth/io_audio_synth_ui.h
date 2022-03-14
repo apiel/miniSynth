@@ -9,64 +9,34 @@
 #include "../../io_midi_util.h"
 #include "./io_audio_synth_core.h"
 
+#include "../io_audio_base.h"
+
 class IO_AudioSynthCoreUI
 {
 public:
-    IO_AudioSynthCoreUI(IO_AudioSynthCore *_core) { core = _core; }
+    IO_AudioSynthCoreUI(IO_AudioBase<IO_AudioSynthCore, IO_AudioSynthCoreUI> *_base)
+    {
+        base = _base;
+        core = (IO_AudioSynthCore *)_base;
+    }
 
     void display(Adafruit_SSD1306 *d, unsigned int *forceRefreshIn)
     {
-        d->clearDisplay();
-        d->setCursor(0, 0);
 
-        if (displayValName)
-        {
-            d->println(displayValName);
-            d->println("");
-            d->setTextSize(6);
-            d->println(displayVal);
-            d->setTextSize(1);
-            displayValName = NULL;
-            *forceRefreshIn = 2000;
-        }
-        else if (msValName)
-        {
-            d->println(msValName);
-            d->setTextSize(3);
-            d->printf("\n%dms\n", msVal);
-            d->setTextSize(1);
-            msValName = NULL;
-            *forceRefreshIn = 2000;
-        }
-        else
-        {
-            d->printf("%s\n", core->wave.getName());
-            // d->printf("%d%% %d|%d|%d%%|%d\n", (int)(core->amplitude * 100.0),
-            //           (int)core->adsr[0], (int)core->adsr[1],
-            //           (int)(core->adsr[2] * 100.0), (int)core->adsr[3]);
+        d->printf("%s\n", core->wave.getName());
+        // d->printf("%d%% %d|%d|%d%%|%d\n", (int)(core->amplitude * 100.0),
+        //           (int)core->adsr[0], (int)core->adsr[1],
+        //           (int)(core->adsr[2] * 100.0), (int)core->adsr[3]);
 
-            addToCursor(d, 0, 4);
-            // d->printf("%s %.1fHz %d\n", getFilter(core->filter.currentFilter),
-            //           core->filter.filterFrequency, core->filter.filterResonance);
-            // d->printf("%.1f %d|%d|%d%%|%d\n", core->filter.dcValue,
-            //           (int)core->filter.adsr[0], (int)core->filter.adsr[1],
-            //           (int)(core->filter.adsr[2] * 100.0),
-            //           (int)core->filter.adsr[3]);
-            // d->printf("Dist %d range %d\n", (int)core->distortion.amount,
-            //           (int)core->distortion.range);
-        }
-    }
-
-    void displayValue(const char *name, byte value)
-    {
-        displayVal = value;
-        displayValName = name;
-    }
-
-    void displayMs(const char *name, unsigned int value)
-    {
-        msVal = value;
-        msValName = name;
+        addToCursor(d, 0, 4);
+        // d->printf("%s %.1fHz %d\n", getFilter(core->filter.currentFilter),
+        //           core->filter.filterFrequency, core->filter.filterResonance);
+        // d->printf("%.1f %d|%d|%d%%|%d\n", core->filter.dcValue,
+        //           (int)core->filter.adsr[0], (int)core->filter.adsr[1],
+        //           (int)(core->filter.adsr[2] * 100.0),
+        //           (int)core->filter.adsr[3]);
+        // d->printf("Dist %d range %d\n", (int)core->distortion.amount,
+        //           (int)core->distortion.range);
     }
 
     void noteOnHandler(byte channel, byte note, byte velocity)
@@ -96,7 +66,7 @@ public:
             else if (control == 14)
             {
                 core->wave.edit(value);
-                displayValue("Wave edit", value);
+                base->displayValue("Wave edit", value);
             }
             else if (control == 15)
             {
@@ -117,7 +87,7 @@ public:
             else if (control == 20)
             {
                 core->setLevel(value);
-                displayValue("Level", value);
+                base->displayValue("Level", value);
             }
         }
         else
@@ -126,12 +96,12 @@ public:
             if (control == 13)
             {
                 core->filter.setResonance(value);
-                displayValue("Resonnance", value);
+                base->displayValue("Resonnance", value);
             }
             else if (control == 14)
             {
                 core->filterLadder.setResonance(value);
-                displayValue("Ladder Resonnance", value);
+                base->displayValue("Ladder Resonnance", value);
             }
             else if (control == 15)
             {
@@ -139,18 +109,18 @@ public:
             else if (control == 16)
             {
                 core->env.setRelease(value);
-                displayMs("Env. Release", core->env.releaseMs);
+                base->displayMs("Env. Release", core->env.releaseMs);
             }
             // top row
             else if (control == 17)
             {
                 core->filter.setCutoff(value);
-                displayValue("Cutoff", value);
+                base->displayValue("Cutoff", value);
             }
             else if (control == 18)
             {
                 core->filterLadder.setCutoff(value);
-                displayValue("Ladder Cutoff", value);
+                base->displayValue("Ladder Cutoff", value);
             }
             else if (control == 19)
             {
@@ -158,19 +128,15 @@ public:
             else if (control == 20)
             {
                 core->env.setAttack(value);
-                displayMs("Env. Attack", core->env.attackMs);
+                base->displayMs("Env. Attack", core->env.attackMs);
             }
         }
     }
 
 private:
     IO_AudioSynthCore *core;
+    IO_AudioBase<IO_AudioSynthCore, IO_AudioSynthCoreUI> *base;
     bool mode = false;
-    byte displayVal = 0;
-    const char *displayValName = NULL;
-
-    unsigned int msVal = 0;
-    const char *msValName = NULL;
 };
 
 #endif

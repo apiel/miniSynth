@@ -11,6 +11,12 @@ template <class AudioCore = void, class AudioCoreUI = void>
 class IO_AudioBase
 {
 protected:
+    byte displayVal = 0;
+    const char *displayValName = NULL;
+
+    unsigned int msVal = 0;
+    const char *msValName = NULL;
+
 public:
     AudioCoreUI *coreUI;
     IO_AudioLoop<AudioCore> *loop;
@@ -23,15 +29,54 @@ public:
 
     void init() {}
 
-    void display(Adafruit_SSD1306 *d, unsigned int * forceRefreshIn)
+    void display(Adafruit_SSD1306 *d, unsigned int *forceRefreshIn)
     {
-        coreUI->display(d, forceRefreshIn);
+        d->clearDisplay();
+        d->setCursor(0, 0);
+
+        if (displayValName) // should move this in io_audio_base
+        {
+            d->println(displayValName);
+            d->println("");
+            d->setTextSize(6);
+            d->println(displayVal);
+            d->setTextSize(1);
+            displayValName = NULL;
+            *forceRefreshIn = 2000;
+        }
+        else if (msValName) // should move this in io_audio_base
+        {
+            d->println(msValName);
+            d->setTextSize(3);
+            d->printf("\n%dms\n", msVal);
+            d->setTextSize(1);
+            msValName = NULL;
+            *forceRefreshIn = 2000;
+        }
+        else
+        {
+            coreUI->display(d, forceRefreshIn);
+        }
+    }
+
+    void displayValue(const char *name, byte value)
+    {
+        displayVal = value;
+        displayValName = name;
+    }
+
+    void displayMs(const char *name, unsigned int value)
+    {
+        msVal = value;
+        msValName = name;
     }
 
     void noteOnHandler(byte channel, byte note, byte velocity)
     {
-        if (channel == 10) {
-            if (note == 36) {
+        if (channel == 10)
+        {
+            if (note == 36)
+            {
                 loop->toggleMode();
             }
             return;
@@ -49,7 +94,8 @@ public:
 
     void noteOffHandler(byte channel, byte note, byte velocity)
     {
-         if (channel == 10) {
+        if (channel == 10)
+        {
             return;
         }
 
