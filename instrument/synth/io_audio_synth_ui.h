@@ -38,21 +38,6 @@ public:
     void noteOnHandler(byte channel, byte note, byte velocity)
     {
         core->noteOn(note, velocity);
-
-        // byte key = getItemKey(note);
-        // if (key != 255) {
-        //     // currentkick = key;
-        // } else if (note == 21 || note == 45) {
-        // } else if (note == 23 || note == 47) {
-        //     // savekick(currentkick);
-        // } else if (note == 20) {
-        // } else if (note == 17 || note == 41) {
-        //     // if (mcMode) {
-        //     //     toggleModulation();
-        //     // } else {
-        //     //     toggleRectifier();
-        //     // }
-        // }
     }
 
     void noteOffHandler(byte channel, byte note, byte velocity)

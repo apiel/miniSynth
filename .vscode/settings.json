@@ -32,7 +32,8 @@
         "sstream": "cpp",
         "random": "cpp",
         "streambuf": "cpp",
-        "tmp": "c"
+        "tmp": "c",
+        "cmath": "cpp"
     },
     "emeraldwalk.runonsave": {
         "commands": [

@@ -6,6 +6,8 @@
 #include "../Pattern.h"
 #include "../io_arp_patterns.h"
 
+#define REF_NOTE _C4
+
 template <class AudioCore = void>
 class IO_AudioLoop
 {
@@ -19,24 +21,25 @@ public:
     // instead of active could be modeLoop: true/false.
     // If true, will loop on the last pressed note, if false play only once.
     // There should also be the possibility to set last note to null...
-    // bool active = false;
     bool active = true;
+    // bool play = false;
+    // bool modeLoop = false;
+    byte nextToPlay = 0;
+    byte play = 0;
 
-    byte currentPattern = 0;
+    byte currentPattern = 2;
     Pattern *pattern;
 
     IO_AudioLoop(AudioCore *_core)
     {
         core = _core;
-        setCurrentPattern(0);
+        setCurrentPattern(currentPattern);
     }
 
     void setCurrentPattern(byte value)
     {
         currentPattern = value;
         pattern = &patterns[currentPattern];
-
-        // pattern->print();
     }
 
     void next()
@@ -44,19 +47,51 @@ public:
         if (!lastStep.slide)
         {
             core->noteOff(lastStep.note);
+            // to avoid repeating this again, let set slide to true
+            lastStep.slide = true;
         }
-        if (active)
-        {
 
-            pattern->print();
+        if (play)
+        {
             Step *step = &pattern->steps[currentStep];
             if (step->note > 0)
             {
-                core->noteOn(step->note, step->velocity);
                 lastStep.set(step);
+                // add note difference to note
+                lastStep.note += (int)play - (int)REF_NOTE;
+                core->noteOn(lastStep.note, lastStep.velocity);
             }
         }
         currentStep = (currentStep + 1) % pattern->stepCount;
+
+        if (/* modeLoop  && */ currentStep == 0)
+        {
+            play = nextToPlay ? nextToPlay : 0;
+        }
+    }
+
+    void noteOn(byte note)
+    {
+        if (active)
+        {
+            // if (modeLoop)
+            // {
+            // }
+            // else
+            // {
+            Serial.printf("nextToPlay %d\n", note);
+
+            nextToPlay = note;
+            // }
+        }
+    }
+
+    void noteOff(byte note)
+    {
+        if (note == nextToPlay)
+        {
+            nextToPlay = 0;
+        }
     }
 
     // void toggle() { active = !active; }
