@@ -15,8 +15,7 @@ class IO_AudioSynth
       public IO_AudioBase<IO_AudioSynthCore, IO_AudioSynthCoreUI> {
    public:
     IO_AudioSynth() {
-        coreUI = new IO_AudioSynthCoreUI(this);
-        coreUI->setBase(this);
+        coreUI = new IO_AudioSynthCoreUI(this, this);
         loop = new IO_AudioLoop<IO_AudioSynthCore>(this);
     }
 };

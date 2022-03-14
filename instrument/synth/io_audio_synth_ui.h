@@ -15,20 +15,11 @@
 class IO_AudioSynthCoreUI
 {
 public:
-    IO_AudioSynthCoreUI(IO_AudioSynthCore * _core)
+    IO_AudioSynthCoreUI(IO_AudioSynthCore * _core, IO_AudioBase<IO_AudioSynthCore, IO_AudioSynthCoreUI> *_base)
     {
         core = _core;
-    }
-
-    void setBase(IO_AudioBase<IO_AudioSynthCore, IO_AudioSynthCoreUI> *_base) {
         base = _base;
     }
-
-    // IO_AudioSynthCoreUI(IO_AudioSynth * _synth)
-    // {
-    //     base = _synth;
-    //     core = _synth;
-    // }
 
     void display(Adafruit_SSD1306 *d, unsigned int *forceRefreshIn)
     {
