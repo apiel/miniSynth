@@ -29,6 +29,13 @@ public:
 
     void noteOnHandler(byte channel, byte note, byte velocity)
     {
+        if (channel == 10) {
+            if (note == 36) {
+                loop->toggleMode();
+            }
+            return;
+        }
+
         if (arpMode)
         {
             loop->noteOn(note);
@@ -41,6 +48,10 @@ public:
 
     void noteOffHandler(byte channel, byte note, byte velocity)
     {
+         if (channel == 10) {
+            return;
+        }
+
         if (arpMode)
         {
             loop->noteOff(note);

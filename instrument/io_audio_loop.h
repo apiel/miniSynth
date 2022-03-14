@@ -18,12 +18,8 @@ private:
     Step lastStep;
 
 public:
-    // instead of active could be modeLoop: true/false.
-    // If true, will loop on the last pressed note, if false play only once.
-    // There should also be the possibility to set last note to null...
     bool active = true;
-    // bool play = false;
-    // bool modeLoop = false;
+    bool modeSingleLoop = true;
     byte nextToPlay = 0;
     byte play = 0;
 
@@ -64,7 +60,7 @@ public:
         }
         currentStep = (currentStep + 1) % pattern->stepCount;
 
-        if (/* modeLoop  && */ currentStep == 0)
+        if (currentStep == 0)
         {
             play = nextToPlay ? nextToPlay : 0;
         }
@@ -74,28 +70,29 @@ public:
     {
         if (active)
         {
-            // if (modeLoop)
-            // {
-            // }
-            // else
-            // {
-            Serial.printf("nextToPlay %d\n", note);
-
             nextToPlay = note;
-            // }
         }
     }
 
     void noteOff(byte note)
     {
-        if (note == nextToPlay)
+        if (modeSingleLoop && note == nextToPlay)
         {
             nextToPlay = 0;
         }
     }
 
-    // void toggle() { active = !active; }
-    // void activate(bool value = true) { active = value; }
+    void toggle() { activate(!active); }
+    void activate(bool value = true) { active = value; }
+
+    void toggleMode() { activateSingleLoopMode(!modeSingleLoop); }
+    void activateSingleLoopMode(bool value = true)
+    {
+        modeSingleLoop = value;
+        if (modeSingleLoop) {
+            nextToPlay = 0;
+        }
+    }
 };
 
 #endif
