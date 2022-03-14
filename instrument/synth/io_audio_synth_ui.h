@@ -10,20 +10,30 @@
 #include "./io_audio_synth_core.h"
 
 #include "../io_audio_base.h"
+#include "./io_audio_synth.h"
 
 class IO_AudioSynthCoreUI
 {
 public:
-    IO_AudioSynthCoreUI(IO_AudioBase<IO_AudioSynthCore, IO_AudioSynthCoreUI> *_base)
+    IO_AudioSynthCoreUI(IO_AudioSynthCore * _core)
     {
-        base = _base;
-        core = (IO_AudioSynthCore *)_base;
+        core = _core;
     }
+
+    void setBase(IO_AudioBase<IO_AudioSynthCore, IO_AudioSynthCoreUI> *_base) {
+        base = _base;
+    }
+
+    // IO_AudioSynthCoreUI(IO_AudioSynth * _synth)
+    // {
+    //     base = _synth;
+    //     core = _synth;
+    // }
 
     void display(Adafruit_SSD1306 *d, unsigned int *forceRefreshIn)
     {
 
-        d->printf("%s\n", core->wave.getName());
+        d->printf("%d %s\n", core->wave.currentWave, core->wave.getName());
         // d->printf("%d%% %d|%d|%d%%|%d\n", (int)(core->amplitude * 100.0),
         //           (int)core->adsr[0], (int)core->adsr[1],
         //           (int)(core->adsr[2] * 100.0), (int)core->adsr[3]);

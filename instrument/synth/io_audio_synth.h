@@ -16,6 +16,7 @@ class IO_AudioSynth
    public:
     IO_AudioSynth() {
         coreUI = new IO_AudioSynthCoreUI(this);
+        coreUI->setBase(this);
         loop = new IO_AudioLoop<IO_AudioSynthCore>(this);
     }
 };
