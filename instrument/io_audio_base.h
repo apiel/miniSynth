@@ -18,6 +18,7 @@ public:
     byte currentPattern = 0;
     Pattern *pattern;
 
+    // for the moment will always be arpMode
     bool arpMode = true;
 
     void init() {}
