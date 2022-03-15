@@ -75,10 +75,6 @@ public:
     {
         if (channel == 10)
         {
-            if (note == 36)
-            {
-                loop->toggleMode();
-            }
             return;
         }
 
@@ -96,6 +92,27 @@ public:
     {
         if (channel == 10)
         {
+            if (note == 36)
+            {
+                loop->toggleMode();
+            }
+            else if (note == 40)
+            {
+                loop->setCurrentPatternSelector(0);
+                displayValue("Pattern selector 0", loop->patternSelector[0]);
+            } else if (note == 41)
+            {
+                loop->setCurrentPatternSelector(1);
+                displayValue("Pattern selector 1", loop->patternSelector[1]);
+            } else if (note == 42)
+            {
+                loop->setCurrentPatternSelector(2);
+                displayValue("Pattern selector 2", loop->patternSelector[2]);
+            } else if (note == 43)
+            {
+                loop->setCurrentPatternSelector(3);
+                displayValue("Pattern selector 3", loop->patternSelector[3]);
+            }
             return;
         }
 

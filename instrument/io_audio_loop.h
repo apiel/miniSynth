@@ -7,6 +7,7 @@
 #include "../io_arp_patterns.h"
 
 #define REF_NOTE _C4
+#define PATTERN_SELECTOR_COUNT 4
 
 template <class AudioCore = void>
 class IO_AudioLoop
@@ -22,20 +23,28 @@ public:
     bool modeSingleLoop = true;
     byte nextToPlay = 0;
     byte play = 0;
+    byte previousLoopNote = 0;
 
-    byte currentPattern = 2;
-    Pattern *pattern;
+    byte patternSelector[PATTERN_SELECTOR_COUNT] = {2, 1, 0, 0};
+    byte currentPatternSelector = 0;
+    byte nextPattern = 0;
+    Pattern *pattern = &patterns[nextPattern];
 
     IO_AudioLoop(AudioCore *_core)
     {
         core = _core;
-        setCurrentPattern(currentPattern);
+        setCurrentPatternSelector(currentPatternSelector);
     }
 
-    void setCurrentPattern(byte value)
+    void setPatternSelector(byte pos, byte value)
     {
-        currentPattern = value;
-        pattern = &patterns[currentPattern];
+        patternSelector[pos % PATTERN_SELECTOR_COUNT] = value;
+    }
+
+    void setCurrentPatternSelector(byte value)
+    {
+        currentPatternSelector = value % PATTERN_SELECTOR_COUNT;
+        nextPattern = patternSelector[currentPatternSelector] % ARP_PATTERN_COUNT;
     }
 
     void next()
@@ -65,6 +74,7 @@ public:
 
         if (currentStep == 0)
         {
+            pattern = &patterns[nextPattern];
             play = nextToPlay ? nextToPlay : 0;
         }
     }
@@ -92,8 +102,14 @@ public:
     void activateSingleLoopMode(bool value = true)
     {
         modeSingleLoop = value;
-        if (modeSingleLoop) {
+        if (modeSingleLoop)
+        {
+            previousLoopNote = nextToPlay;
             nextToPlay = 0;
+        }
+        else
+        {
+            nextToPlay = previousLoopNote;
         }
     }
 };
