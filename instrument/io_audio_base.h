@@ -17,6 +17,9 @@ protected:
     unsigned int msVal = 0;
     const char *msValName = NULL;
 
+    byte loopPadPressed = 255;
+    bool loopPadPressedDidAction = false;
+
 public:
     AudioCoreUI *coreUI;
     IO_AudioLoop<AudioCore> *loop;
@@ -75,6 +78,10 @@ public:
     {
         if (channel == 10)
         {
+            if (note == 36)
+            {
+                loopPadPressed = 0;
+            }
             return;
         }
 
@@ -94,21 +101,29 @@ public:
         {
             if (note == 36)
             {
-                loop->toggleMode();
+                if (!loopPadPressedDidAction)
+                {
+                    loop->toggleMode();
+                }
+                loopPadPressed = 255;
+                loopPadPressedDidAction = false;
             }
             else if (note == 40)
             {
                 loop->setCurrentPatternSelector(0);
                 displayValue("Pattern selector 0", loop->patternSelector[0]);
-            } else if (note == 41)
+            }
+            else if (note == 41)
             {
                 loop->setCurrentPatternSelector(1);
                 displayValue("Pattern selector 1", loop->patternSelector[1]);
-            } else if (note == 42)
+            }
+            else if (note == 42)
             {
                 loop->setCurrentPatternSelector(2);
                 displayValue("Pattern selector 2", loop->patternSelector[2]);
-            } else if (note == 43)
+            }
+            else if (note == 43)
             {
                 loop->setCurrentPatternSelector(3);
                 displayValue("Pattern selector 3", loop->patternSelector[3]);
@@ -128,6 +143,34 @@ public:
 
     void controlChangeHandler(byte channel, byte control, int8_t direction, byte value)
     {
+        if (loopPadPressed != 255)
+        {
+            if (control == 17)
+            {
+                loop->setPatternSelector(0, value);
+                displayValue("Pattern selector 0", loop->patternSelector[0]);
+                loopPadPressedDidAction = true;
+            }
+            else if (control == 18)
+            {
+                loop->setPatternSelector(1, value);
+                displayValue("Pattern selector 1", loop->patternSelector[1]);
+                loopPadPressedDidAction = true;
+            }
+            else if (control == 19)
+            {
+                loop->setPatternSelector(2, value);
+                displayValue("Pattern selector 2", loop->patternSelector[2]);
+                loopPadPressedDidAction = true;
+            }
+            else if (control == 20)
+            {
+                loop->setPatternSelector(3, value);
+                displayValue("Pattern selector 3", loop->patternSelector[3]);
+                loopPadPressedDidAction = true;
+            }
+            return;
+        }
         coreUI->controlChangeHandler(channel, control, direction, value);
     }
 };
