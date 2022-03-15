@@ -26,7 +26,7 @@ void audioInit()
 
     for (byte pos = 0; pos < INSTRUMENT_COUNT; pos++)
     {
-        getInstrument(pos)->init(pos, instrumentsPtr, &currentInstrument);
+        getInstrument(pos)->init(pos, instruments, &currentInstrument);
     }
 }
 
