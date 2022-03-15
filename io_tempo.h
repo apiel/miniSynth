@@ -26,8 +26,8 @@ void tempoInit() { setTempo(bpm - BPM_START); }
 void tempoLoop() {
     if (timer.check() == 1) {
         timer.reset();
-        for (byte pos = 0; pos < SYNTH_COUNT; pos++) {
-            synth[pos].loop->next();
+        for (byte pos = 0; pos < INSTRUMENT_COUNT; pos++) {
+            getInstrument(pos)->loop->next();
         }
     }
 }

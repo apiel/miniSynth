@@ -4,7 +4,7 @@
 #include <Arduino.h>
 
 #include "io_display.h"
-#include "io_instrument.h"
+#include "io_instruments.h"
 #include "io_midi_core.h"
 #include "io_midi_util.h"
 
@@ -20,7 +20,7 @@ void noteOnHandler(byte channel, byte note, byte velocity)
     Serial.print(", velocity=");
     Serial.println(velocity, DEC);
 
-    getSynth()->noteOnHandler(channel, note, velocity);
+    getInstrument()->noteOnHandler(channel, note, velocity);
     displayUpdate();
 }
 
@@ -33,7 +33,7 @@ void noteOffHandler(byte channel, byte note, byte velocity)
     Serial.print(", velocity=");
     Serial.println(velocity, DEC);
 
-    getSynth()->noteOffHandler(channel, note, velocity);
+    getInstrument()->noteOffHandler(channel, note, velocity);
     displayUpdate();
 }
 
@@ -47,7 +47,7 @@ void controlChangeHandler(byte channel, byte control, byte value)
     Serial.println(value, DEC);
 
     int8_t direction = getKnobDirection(control, value);
-    getSynth()->controlChangeHandler(channel, control, direction, value);
+    getInstrument()->controlChangeHandler(channel, control, direction, value);
     displayUpdate();
 }
 

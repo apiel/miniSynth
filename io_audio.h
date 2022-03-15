@@ -4,29 +4,29 @@
 #include <Arduino.h>
 #include <Audio.h>
 
-#include "io_instrument.h"
+#include "io_instruments.h"
 
 AudioOutputMQS audioOut;
-AudioMixer4 mixerSynth;
+AudioMixer4 mixerOutput;
 
-AudioConnection patchCordMixerSynth(mixerSynth, audioOut);
-AudioConnection patchCordSynth0(synth[SYNTH_0], mixerSynth);
-AudioConnection patchCordSynth1(synth[SYNTH_1], mixerSynth);
-AudioConnection patchCordSynth2(synth[SYNTH_2], mixerSynth);
-AudioConnection patchCordSynth3(synth[SYNTH_3], mixerSynth);
+AudioConnection patchCordMixerSynth(mixerOutput, audioOut);
+AudioConnection patchCordSynth0(*getInstrument(SYNTH_0), mixerOutput);
+AudioConnection patchCordSynth1(*getInstrument(SYNTH_1), mixerOutput);
+AudioConnection patchCordSynth2(*getInstrument(SYNTH_2), mixerOutput);
+AudioConnection patchCordSynth3(*getInstrument(SYNTH_3), mixerOutput);
 
 void audioInit()
 {
     AudioMemory(25);
 
-    mixerSynth.gain(0, 1.0f);
-    mixerSynth.gain(1, 1.0f);
-    mixerSynth.gain(2, 1.0f);
-    mixerSynth.gain(3, 1.0f);
+    mixerOutput.gain(0, 1.0f);
+    mixerOutput.gain(1, 1.0f);
+    mixerOutput.gain(2, 1.0f);
+    mixerOutput.gain(3, 1.0f);
 
-    for (byte pos = 0; pos < SYNTH_COUNT; pos++)
+    for (byte pos = 0; pos < INSTRUMENT_COUNT; pos++)
     {
-        synth[pos].init(pos);
+        getInstrument(pos)->init(pos, instrumentsPtr, &currentInstrument);
     }
 }
 

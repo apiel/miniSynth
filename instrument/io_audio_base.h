@@ -5,8 +5,9 @@
 #include <Arduino.h>
 #include <Audio.h>
 
+#include "../io_instruments.h"
+#include "../io_instrument_list.h"
 #include "./io_audio_loop.h"
-#include "../io_instrument.h"
 
 template <class AudioCore = void, class AudioCoreUI = void>
 class IO_AudioBase
@@ -21,8 +22,12 @@ protected:
     IO_AudioLoop<AudioCore> *loopPadPressed = NULL;
     bool loopPadPressedDidAction = false;
 
+    IO_AudioBase<AudioCore, AudioCoreUI> **instruments;
+    byte *currentInstrument = 0;
+
 public:
     byte id = 0;
+
     AudioCoreUI *coreUI;
     IO_AudioLoop<AudioCore> *loop;
 
@@ -32,7 +37,18 @@ public:
     // for the moment will always be arpMode
     bool arpMode = true;
 
-    void init(byte _id) { id = _id; }
+    void init(byte _id, IO_AudioBase<AudioCore, AudioCoreUI> **_instruments, byte *_currentInstrument)
+    {
+        id = _id;
+        instruments = _instruments;
+        currentInstrument = _currentInstrument;
+    }
+
+    IO_AudioBase<AudioCore, AudioCoreUI> *getInstrument(byte pos) { return instruments[pos % INSTRUMENT_COUNT]; }
+    void setCurrentInstrument(byte value)
+    {
+        *currentInstrument = value % INSTRUMENT_COUNT;
+    }
 
     void display(Adafruit_SSD1306 *d, unsigned int *forceRefreshIn)
     {
@@ -82,19 +98,19 @@ public:
         {
             if (note == 36)
             {
-                loopPadPressed = getSynth(0)->loop;
+                loopPadPressed = getInstrument(SYNTH_0)->loop;
             }
             else if (note == 37)
             {
-                loopPadPressed = getSynth(1)->loop;
+                loopPadPressed = getInstrument(SYNTH_1)->loop;
             }
             else if (note == 38)
             {
-                loopPadPressed = getSynth(2)->loop;
+                loopPadPressed = getInstrument(SYNTH_2)->loop;
             }
             else if (note == 39)
             {
-                loopPadPressed = getSynth(3)->loop;
+                loopPadPressed = getInstrument(SYNTH_3)->loop;
             }
             return;
         }
@@ -113,7 +129,7 @@ public:
     {
         if (_id != id)
         {
-            setCurrentSynth(_id);
+            setCurrentInstrument(_id);
         }
         else if (!loopPadPressedDidAction)
         {

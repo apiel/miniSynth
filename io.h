@@ -5,7 +5,7 @@
 
 #include "io_audio.h"
 #include "io_display.h"
-#include "io_instrument.h"
+#include "io_instruments.h"
 #include "io_midi.h"
 #include "io_tempo.h"
 
