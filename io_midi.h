@@ -7,7 +7,6 @@
 #include "io_instrument.h"
 #include "io_midi_core.h"
 #include "io_midi_util.h"
-#include "io_view.h"
 
 void noteOnHandler(byte channel, byte note, byte velocity)
 {

@@ -6,6 +6,7 @@
 #include <Audio.h>
 
 #include "./io_audio_loop.h"
+#include "../io_instrument.h"
 
 template <class AudioCore = void, class AudioCoreUI = void>
 class IO_AudioBase
@@ -17,10 +18,11 @@ protected:
     unsigned int msVal = 0;
     const char *msValName = NULL;
 
-    byte loopPadPressed = 255;
+    IO_AudioLoop<AudioCore> *loopPadPressed = NULL;
     bool loopPadPressedDidAction = false;
 
 public:
+    byte id = 0;
     AudioCoreUI *coreUI;
     IO_AudioLoop<AudioCore> *loop;
 
@@ -30,7 +32,7 @@ public:
     // for the moment will always be arpMode
     bool arpMode = true;
 
-    void init() {}
+    void init(byte _id) { id = _id; }
 
     void display(Adafruit_SSD1306 *d, unsigned int *forceRefreshIn)
     {
@@ -80,7 +82,19 @@ public:
         {
             if (note == 36)
             {
-                loopPadPressed = 0;
+                loopPadPressed = getSynth(0)->loop;
+            }
+            else if (note == 37)
+            {
+                loopPadPressed = getSynth(1)->loop;
+            }
+            else if (note == 38)
+            {
+                loopPadPressed = getSynth(2)->loop;
+            }
+            else if (note == 39)
+            {
+                loopPadPressed = getSynth(3)->loop;
             }
             return;
         }
@@ -95,18 +109,39 @@ public:
         }
     }
 
+    void loopPadPressedAction(byte _id)
+    {
+        if (_id != id)
+        {
+            setCurrentSynth(_id);
+        }
+        else if (!loopPadPressedDidAction)
+        {
+            loop->toggleMode();
+        }
+        loopPadPressed = NULL;
+        loopPadPressedDidAction = false;
+    }
+
     void noteOffHandler(byte channel, byte note, byte velocity)
     {
         if (channel == 10)
         {
             if (note == 36)
             {
-                if (!loopPadPressedDidAction)
-                {
-                    loop->toggleMode();
-                }
-                loopPadPressed = 255;
-                loopPadPressedDidAction = false;
+                loopPadPressedAction(0);
+            }
+            else if (note == 37)
+            {
+                loopPadPressedAction(1);
+            }
+            else if (note == 38)
+            {
+                loopPadPressedAction(2);
+            }
+            else if (note == 39)
+            {
+                loopPadPressedAction(3);
             }
             else if (note == 40)
             {
@@ -143,30 +178,30 @@ public:
 
     void controlChangeHandler(byte channel, byte control, int8_t direction, byte value)
     {
-        if (loopPadPressed != 255)
+        if (loopPadPressed)
         {
             if (control == 17)
             {
-                loop->setPatternSelector(0, value);
-                displayValue("Pattern selector 0", loop->patternSelector[0]);
+                loopPadPressed->setPatternSelector(0, value);
+                displayValue("Pattern selector 0", loopPadPressed->patternSelector[0]);
                 loopPadPressedDidAction = true;
             }
             else if (control == 18)
             {
-                loop->setPatternSelector(1, value);
-                displayValue("Pattern selector 1", loop->patternSelector[1]);
+                loopPadPressed->setPatternSelector(1, value);
+                displayValue("Pattern selector 1", loopPadPressed->patternSelector[1]);
                 loopPadPressedDidAction = true;
             }
             else if (control == 19)
             {
-                loop->setPatternSelector(2, value);
-                displayValue("Pattern selector 2", loop->patternSelector[2]);
+                loopPadPressed->setPatternSelector(2, value);
+                displayValue("Pattern selector 2", loopPadPressed->patternSelector[2]);
                 loopPadPressedDidAction = true;
             }
             else if (control == 20)
             {
-                loop->setPatternSelector(3, value);
-                displayValue("Pattern selector 3", loop->patternSelector[3]);
+                loopPadPressed->setPatternSelector(3, value);
+                displayValue("Pattern selector 3", loopPadPressed->patternSelector[3]);
                 loopPadPressedDidAction = true;
             }
             return;

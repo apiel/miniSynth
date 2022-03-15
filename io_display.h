@@ -10,7 +10,6 @@
 #include "io_audio.h"
 #include "io_display_util.h"
 #include "io_instrument.h"
-#include "io_view.h"
 
 // Declaration for an SSD1306 display connected to I2C (SDA, SCL pins)
 #define OLED_RESET 4 // Reset pin # (or -1 if sharing Arduino reset pin)
