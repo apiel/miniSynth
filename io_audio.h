@@ -18,6 +18,12 @@ AudioConnection patchCordSynth3(synth[SYNTH_3], mixerSynth);
 void audioInit()
 {
     AudioMemory(25);
+
+    mixerSynth.gain(0, 1.0f);
+    mixerSynth.gain(1, 1.0f);
+    mixerSynth.gain(2, 1.0f);
+    mixerSynth.gain(3, 1.0f);
+
     for (byte pos = 0; pos < SYNTH_COUNT; pos++)
     {
         synth[pos].init(pos);
