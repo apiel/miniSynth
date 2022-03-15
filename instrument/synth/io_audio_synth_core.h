@@ -3,8 +3,8 @@
 
 #include <Arduino.h>
 #include <Audio.h>
+#include <AudioStream.h>
 
-#include "../../audio/io_audio_dumb.h"
 #include "../../audio/io_audio_filter.h"
 #include "../../audio/io_audio_filter_ladder.h"
 #include "../../audio/io_audio_waveform.h"
@@ -13,9 +13,11 @@
 #include "../../effect/AudioEffectDistortion.h"
 #include "../../io_util.h"
 
-class IO_AudioSynthCore : public IO_AudioDumb
+class IO_AudioSynthCore : public AudioStream
 {
 protected:
+    audio_block_t *inputQueueArray[1];
+
 public:
     IO_AudioWaveform wave;
     IO_AudioEnv env;
@@ -34,7 +36,7 @@ public:
     // AudioConnection *patchCordFilterToDistortion;
     // AudioConnection *patchCordDistortionToOutput;
 
-    IO_AudioSynthCore()
+    IO_AudioSynthCore() : AudioStream(1, inputQueueArray)
     {
         patchCordWaveToEnv = new AudioConnection(wave, env);
         patchCordEnvToFilter = new AudioConnection(env, filter);
@@ -48,6 +50,15 @@ public:
         wave.begin();
 
         // distortion.distortion(0.0);
+    }
+
+    virtual void update(void)
+    {
+        audio_block_t *block = receiveReadOnly();
+        if (!block)
+            return;
+        transmit(block);
+        release(block);
     }
 
     void setLevel(byte value)
