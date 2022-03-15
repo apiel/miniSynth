@@ -109,8 +109,8 @@ public:
             }
             else if (control == 16)
             {
-                core->env.setRelease(value);
-                base->displayMs("Env. Release", core->env.releaseMs);
+                core->setRelease(value);
+                base->displayMs("Env. Release", core->releaseMs);
             }
             // top row
             else if (control == 17)
@@ -128,8 +128,8 @@ public:
             }
             else if (control == 20)
             {
-                core->env.setAttack(value);
-                base->displayMs("Env. Attack", core->env.attackMs);
+                core->setAttack(value);
+                base->displayMs("Env. Attack", core->attackMs);
             }
         }
     }

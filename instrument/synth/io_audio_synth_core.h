@@ -3,7 +3,6 @@
 
 #include <Arduino.h>
 #include <Audio.h>
-#include <AudioStream.h>
 
 #include "../../audio/io_audio_filter.h"
 #include "../../audio/io_audio_filter_ladder.h"
@@ -13,14 +12,10 @@
 #include "../../effect/AudioEffectDistortion.h"
 #include "../../io_util.h"
 
-class IO_AudioSynthCore : public AudioStream
+class IO_AudioSynthCore : public IO_AudioEnv
 {
-protected:
-    audio_block_t *inputQueueArray[1];
-
 public:
     IO_AudioWaveform wave;
-    IO_AudioEnv env;
     // AudioEffectDistortion distortion;
     IO_AudioFilter filter;
     IO_AudioFilterLadder filterLadder;
@@ -29,19 +24,17 @@ public:
 
     float level = 127;
 
-    AudioConnection *patchCordWaveToEnv;
-    AudioConnection *patchCordEnvToFilter;
+    AudioConnection *patchCordWaveToFilter;
     AudioConnection *patchCordFilterToFilterLadder;
-    AudioConnection *patchCordFilterLadderToOutput;
+    AudioConnection *patchCordFilterLadderToEnvOutput;
     // AudioConnection *patchCordFilterToDistortion;
     // AudioConnection *patchCordDistortionToOutput;
 
-    IO_AudioSynthCore() : AudioStream(1, inputQueueArray)
+    IO_AudioSynthCore()
     {
-        patchCordWaveToEnv = new AudioConnection(wave, env);
-        patchCordEnvToFilter = new AudioConnection(env, filter);
+        patchCordWaveToFilter = new AudioConnection(wave, filter);
         patchCordFilterToFilterLadder = new AudioConnection(filter, filterLadder);
-        patchCordFilterLadderToOutput = new AudioConnection(filterLadder, *this);
+        patchCordFilterLadderToEnvOutput = new AudioConnection(filterLadder, *this);
 
         // patchCordFilterToDistortion = new AudioConnection(filter, distortion);
         // patchCordDistortionToOutput = new AudioConnection(distortion, *this);
@@ -50,15 +43,6 @@ public:
         wave.begin();
 
         // distortion.distortion(0.0);
-    }
-
-    virtual void update(void)
-    {
-        audio_block_t *block = receiveReadOnly();
-        if (!block)
-            return;
-        transmit(block);
-        release(block);
     }
 
     void setLevel(byte value)
@@ -79,7 +63,7 @@ public:
         // setAmplitude(_amp);
         wave.frequency(NOTE_FREQ[note]);
 
-        env.noteOn();
+        IO_AudioEnv::noteOn();
         // filter.env.noteOn();
     }
 
@@ -87,7 +71,7 @@ public:
     {
         if (note == lastNote)
         {
-            env.noteOff();
+            IO_AudioEnv::noteOff();
             // filter.env.noteOff();
         }
     }
