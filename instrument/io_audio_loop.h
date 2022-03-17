@@ -9,6 +9,16 @@
 #define REF_NOTE _C4
 #define PATTERN_SELECTOR_COUNT 4
 
+/**
+ *
+ * Use key combination to change the notes of the loop
+ * so there is very basic pattern where not can be modified on the fly
+ * 
+ * How to handle params lock? This should be directly in the synth part or?
+ * Maybe could use a note to reference note 
+ * 
+*/
+
 template <class AudioCore = void>
 class IO_AudioLoop
 {

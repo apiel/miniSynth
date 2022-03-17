@@ -40,6 +40,8 @@ public:
         //           (int)core->distortion.range);
     }
 
+// Feel like control are too coupled to the synth and arp system...
+// maybe this whole stuff should extracted!
     void noteOnHandler(byte channel, byte note, byte velocity)
     {
         core->noteOn(note, velocity);
