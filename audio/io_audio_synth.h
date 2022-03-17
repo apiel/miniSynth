@@ -1,5 +1,5 @@
-#ifndef IO_AUDIO_SYNTH_CORE_H_
-#define IO_AUDIO_SYNTH_CORE_H_
+#ifndef IO_AUDIO_SYNTH_H_
+#define IO_AUDIO_SYNTH_H_
 
 #include <Arduino.h>
 #include <Audio.h>
@@ -12,7 +12,7 @@
 #include "../../effect/AudioEffectDistortion.h"
 #include "../../io_util.h"
 
-class IO_AudioSynthCore : public IO_AudioEnv
+class IO_AudioSynth : public IO_AudioEnv
 {
 public:
     IO_AudioWaveform wave;
@@ -30,7 +30,7 @@ public:
     // AudioConnection *patchCordFilterToDistortion;
     // AudioConnection *patchCordDistortionToOutput;
 
-    IO_AudioSynthCore()
+    IO_AudioSynth()
     {
         patchCordWaveToFilter = new AudioConnection(wave, filter);
         patchCordFilterToFilterLadder = new AudioConnection(filter, filterLadder);

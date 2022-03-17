@@ -7,7 +7,6 @@
 
 #include "../../io_display_util.h"
 #include "../../io_midi_util.h"
-#include "./io_audio_synth_core.h"
 
 #include "../io_audio_base.h"
 #include "./io_audio_synth.h"
