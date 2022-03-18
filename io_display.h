@@ -58,21 +58,6 @@ protected:
         }
     }
 
-    void update()
-    {
-        if (millis() - lastDisplayUpdate >= 50)
-        {
-            needDisplayUpdate = false;
-            lastDisplayUpdate = millis();
-            render(&forceRefreshIn);
-            d.display();
-        }
-        else
-        {
-            needDisplayUpdate = true;
-        }
-    }
-
 public:
     void init()
     {
@@ -92,6 +77,21 @@ public:
 
         d.println("Init synth...");
         d.display();
+    }
+
+    void update()
+    {
+        if (millis() - lastDisplayUpdate >= 50)
+        {
+            needDisplayUpdate = false;
+            lastDisplayUpdate = millis();
+            render(&forceRefreshIn);
+            d.display();
+        }
+        else
+        {
+            needDisplayUpdate = true;
+        }
     }
 
     void loop()

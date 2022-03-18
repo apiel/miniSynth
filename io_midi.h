@@ -4,7 +4,6 @@
 #include <Arduino.h>
 
 #include "io_display.h"
-#include "io_instruments.h"
 #include "io_midi_core.h"
 #include "io_midi_util.h"
 
@@ -20,8 +19,8 @@ void noteOnHandler(byte channel, byte note, byte velocity)
     Serial.print(", velocity=");
     Serial.println(velocity, DEC);
 
-    getInstrument()->noteOnHandler(channel, note, velocity);
-    displayUpdate();
+    // getInstrument()->noteOnHandler(channel, note, velocity);
+    display.update();
 }
 
 void noteOffHandler(byte channel, byte note, byte velocity)
@@ -33,8 +32,8 @@ void noteOffHandler(byte channel, byte note, byte velocity)
     Serial.print(", velocity=");
     Serial.println(velocity, DEC);
 
-    getInstrument()->noteOffHandler(channel, note, velocity);
-    displayUpdate();
+    // getInstrument()->noteOffHandler(channel, note, velocity);
+    display.update();
 }
 
 void controlChangeHandler(byte channel, byte control, byte value)
@@ -47,8 +46,8 @@ void controlChangeHandler(byte channel, byte control, byte value)
     Serial.println(value, DEC);
 
     int8_t direction = getKnobDirection(control, value);
-    getInstrument()->controlChangeHandler(channel, control, direction, value);
-    displayUpdate();
+    // getInstrument()->controlChangeHandler(channel, control, direction, value);
+    display.update();
 }
 
 void afterTouchPolyHandler(uint8_t channel, uint8_t note, uint8_t pressure)

@@ -7,7 +7,7 @@ enum
     SYNTH_1,
     SYNTH_2,
     SYNTH_3,
-    INSTRUMENT_COUNT
+    SYNTH_COUNT
 };
 
 #endif

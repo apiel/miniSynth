@@ -14,11 +14,11 @@
  *
  * Use key combination to change the notes of the loop
  * so there is very basic pattern where not can be modified on the fly
- * 
+ *
  * How to handle params lock? This should be directly in the synth part or?
- * Maybe could use a note to reference note 
- * 
-*/
+ * Maybe could use a note to reference note
+ *
+ */
 
 class IO_AudioLoop
 {
@@ -29,6 +29,7 @@ private:
     Step lastStep;
 
 public:
+    byte id = 0;
     bool active = true;
     bool modeSingleLoop = true;
     byte nextToPlay = 0;
@@ -39,6 +40,11 @@ public:
     byte currentPatternSelector = 0;
     byte nextPattern = 0;
     Pattern *pattern = &patterns[nextPattern];
+
+    IO_AudioLoop(IO_AudioEnv *_env, byte _id) : IO_AudioLoop(_env)
+    {
+        id = id;
+    }
 
     IO_AudioLoop(IO_AudioEnv *_env)
     {

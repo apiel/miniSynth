@@ -63,7 +63,7 @@ public:
         // setAmplitude(_amp);
         wave.frequency(NOTE_FREQ[note]);
 
-        IO_AudioEnv::noteOn();
+        IO_AudioEnv::noteOn(note, velocity);
         // filter.env.noteOn();
     }
 
@@ -71,7 +71,7 @@ public:
     {
         if (note == lastNote)
         {
-            IO_AudioEnv::noteOff();
+            IO_AudioEnv::noteOff(note);
             // filter.env.noteOff();
         }
     }
