@@ -2,8 +2,8 @@
 #define IO_SYNTH_H_
 
 #include <Arduino.h>
+#include <Audio.h>
 
-#include "io_audio.h"
 #include "io_display.h"
 #include "io_midi.h"
 #include "io_tempo.h"
@@ -12,7 +12,6 @@
 #include "io_instrument_list.h"
 #include "controller/io_controller_akai_mpk_mini.h"
 
-IO_Display display;
 IO_AudioSynth synths[SYNTH_COUNT];
 IO_AudioLoop loop0(&synths[SYNTH_0], SYNTH_0);
 IO_AudioLoop loop1(&synths[SYNTH_1], SYNTH_1);
@@ -25,12 +24,22 @@ IO_ControllerAkaiMPKmini controller(
     {&loop0, &loop1, &loop2, &loop3},
     {&synths[SYNTH_0], &synths[SYNTH_1], &synths[SYNTH_2], &synths[SYNTH_3]});
 
+AudioOutputMQS audioOut;
+AudioMixer4 mixerOutput;
+
+AudioConnection patchCordMixerSynth(mixerOutput, audioOut);
+AudioConnection patchCordSynth0(synths[SYNTH_0], 0, mixerOutput, 0);
+AudioConnection patchCordSynth1(synths[SYNTH_1], 0, mixerOutput, 1);
+AudioConnection patchCordSynth2(synths[SYNTH_2], 0, mixerOutput, 2);
+AudioConnection patchCordSynth3(synths[SYNTH_3], 0, mixerOutput, 3);
+
 void ioInit()
 {
     Serial.println("Mini synth init");
     display.init();
 
-    audioInit();
+    AudioMemory(25);
+
     midiInit();
 
     display.update();

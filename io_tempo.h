@@ -4,8 +4,6 @@
 #include <Arduino.h>
 #include <Metro.h>
 
-#include "io_audio.h"
-
 // 4 ♬ ♬ step per beat
 #define STEP_PER_BEAT 4
 #define BPM_START 73

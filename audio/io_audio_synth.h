@@ -4,13 +4,12 @@
 #include <Arduino.h>
 #include <Audio.h>
 
-#include "../../audio/io_audio_filter.h"
-#include "../../audio/io_audio_filter_ladder.h"
-#include "../../audio/io_audio_waveform.h"
-#include "../../audio/io_audio_env.h"
-#include "../../audio/note.h"
-#include "../../effect/AudioEffectDistortion.h"
-#include "../../io_util.h"
+#include "io_audio_filter.h"
+#include "io_audio_filter_ladder.h"
+#include "io_audio_waveform.h"
+#include "io_audio_env.h"
+#include "note.h"
+#include "../effect/AudioEffectDistortion.h"
 
 class IO_AudioSynth : public IO_AudioEnv
 {

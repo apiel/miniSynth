@@ -13,11 +13,11 @@
 // Declaration for an SSD1306 display connected to I2C (SDA, SCL pins)
 #define OLED_RESET 4 // Reset pin # (or -1 if sharing Arduino reset pin)
 
+Adafruit_SSD1306 d(SCREEN_W, SCREEN_H, &Wire, OLED_RESET);
+
 class IO_Display
 {
 protected:
-    Adafruit_SSD1306 d(SCREEN_W, SCREEN_H, &Wire, OLED_RESET);
-
     unsigned long lastDisplayUpdate = millis();
     bool needDisplayUpdate = false;
     unsigned int forceRefreshIn = 0;
@@ -119,5 +119,7 @@ public:
         msValName = name;
     }
 };
+
+IO_Display display;
 
 #endif

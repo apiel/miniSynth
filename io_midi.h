@@ -5,7 +5,6 @@
 
 #include "io_display.h"
 #include "io_midi_core.h"
-#include "io_midi_util.h"
 
 void noteOnHandler(byte channel, byte note, byte velocity)
 {
@@ -45,8 +44,7 @@ void controlChangeHandler(byte channel, byte control, byte value)
     Serial.print(", value=");
     Serial.println(value, DEC);
 
-    int8_t direction = getKnobDirection(control, value);
-    // getInstrument()->controlChangeHandler(channel, control, direction, value);
+    // getInstrument()->controlChangeHandler(channel, control, value);
     display.update();
 }
 
