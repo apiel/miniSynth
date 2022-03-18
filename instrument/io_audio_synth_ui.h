@@ -20,25 +20,6 @@ public:
         base = _base;
     }
 
-    void display(Adafruit_SSD1306 *d, unsigned int *forceRefreshIn)
-    {
-
-        d->printf("%d %s\n", core->wave.currentWave, core->wave.getName());
-        // d->printf("%d%% %d|%d|%d%%|%d\n", (int)(core->amplitude * 100.0),
-        //           (int)core->adsr[0], (int)core->adsr[1],
-        //           (int)(core->adsr[2] * 100.0), (int)core->adsr[3]);
-
-        addToCursor(d, 0, 4);
-        // d->printf("%s %.1fHz %d\n", getFilter(core->filter.currentFilter),
-        //           core->filter.filterFrequency, core->filter.filterResonance);
-        // d->printf("%.1f %d|%d|%d%%|%d\n", core->filter.dcValue,
-        //           (int)core->filter.adsr[0], (int)core->filter.adsr[1],
-        //           (int)(core->filter.adsr[2] * 100.0),
-        //           (int)core->filter.adsr[3]);
-        // d->printf("Dist %d range %d\n", (int)core->distortion.amount,
-        //           (int)core->distortion.range);
-    }
-
 // Feel like control are too coupled to the synth and arp system...
 // maybe this whole stuff should extracted!
     void noteOnHandler(byte channel, byte note, byte velocity)

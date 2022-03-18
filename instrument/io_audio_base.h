@@ -50,48 +50,6 @@ public:
         *currentInstrument = value % INSTRUMENT_COUNT;
     }
 
-    void display(Adafruit_SSD1306 *d, unsigned int *forceRefreshIn)
-    {
-        d->clearDisplay();
-        d->setCursor(0, 0);
-
-        if (displayValName) // should move this in io_audio_base
-        {
-            d->println(displayValName);
-            d->println("");
-            d->setTextSize(6);
-            d->println(displayVal);
-            d->setTextSize(1);
-            displayValName = NULL;
-            *forceRefreshIn = 2000;
-        }
-        else if (msValName) // should move this in io_audio_base
-        {
-            d->println(msValName);
-            d->setTextSize(3);
-            d->printf("\n%dms\n", msVal);
-            d->setTextSize(1);
-            msValName = NULL;
-            *forceRefreshIn = 2000;
-        }
-        else
-        {
-            coreUI->display(d, forceRefreshIn);
-        }
-    }
-
-    void displayValue(const char *name, byte value)
-    {
-        displayVal = value;
-        displayValName = name;
-    }
-
-    void displayMs(const char *name, unsigned int value)
-    {
-        msVal = value;
-        msValName = name;
-    }
-
     void noteOnHandler(byte channel, byte note, byte velocity)
     {
         if (channel == 10)

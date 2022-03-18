@@ -9,10 +9,12 @@
 #include "io_midi.h"
 #include "io_tempo.h"
 
+IO_Display display;
+
 void ioInit()
 {
     Serial.println("Mini synth init");
-    displayInit();
+    display.init();
 
     audioInit();
     midiInit();
@@ -24,7 +26,7 @@ void ioInit()
 void ioLoop()
 {
     midiLoop();
-    displayLoop();
+    display.loop();;
     tempoLoop();
 }
 

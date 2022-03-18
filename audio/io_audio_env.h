@@ -32,6 +32,16 @@ public:
         // Serial.printf("setRelease %.6f\n", releaseMs);
         release(releaseMs);
     }
+
+    void noteOn(byte note, byte velocity)
+    {
+        AudioEffectEnvelope::noteOn();
+    }
+
+    void noteOff(byte note)
+    {
+        AudioEffectEnvelope::noteOff();
+    }
 };
 
 #endif

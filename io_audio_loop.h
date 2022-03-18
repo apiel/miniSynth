@@ -3,8 +3,9 @@
 
 #include <Arduino.h>
 
-#include "../Pattern.h"
-#include "../io_arp_patterns.h"
+#include "Pattern.h"
+#include "io_arp_patterns.h"
+#include "audio/io_audio_env.h"
 
 #define REF_NOTE _C4
 #define PATTERN_SELECTOR_COUNT 4
@@ -19,11 +20,10 @@
  * 
 */
 
-template <class AudioCore = void>
 class IO_AudioLoop
 {
 private:
-    AudioCore *core;
+    IO_AudioEnv *env;
 
     byte currentStep = 0;
     Step lastStep;
@@ -40,9 +40,9 @@ public:
     byte nextPattern = 0;
     Pattern *pattern = &patterns[nextPattern];
 
-    IO_AudioLoop(AudioCore *_core)
+    IO_AudioLoop(IO_AudioEnv *_env)
     {
-        core = _core;
+        env = _env;
         setCurrentPatternSelector(currentPatternSelector);
     }
 
@@ -61,7 +61,7 @@ public:
     {
         if (!lastStep.slide)
         {
-            core->noteOff(lastStep.note);
+            env->noteOff(lastStep.note);
             // to avoid repeating this again, let set slide to true
             lastStep.slide = true;
         }
@@ -74,10 +74,11 @@ public:
                 lastStep.set(step);
                 // add note difference to note
                 lastStep.note += (int)play - (int)REF_NOTE;
-                core->noteOn(lastStep.note, lastStep.velocity);
+                env->noteOn(lastStep.note, lastStep.velocity);
                 // could have mode with no substain here
                 // and directly noteOff
                 // for drum?
+                // but should this be part of the envelop and not from the sequencer
             }
         }
         currentStep = (currentStep + 1) % pattern->stepCount;
