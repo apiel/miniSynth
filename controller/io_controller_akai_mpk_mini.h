@@ -9,12 +9,20 @@
 #include "../io_instrument_list.h"
 #include "../io_display.h"
 
+enum
+{
+    MODE_MAIN_ARP,
+    MODE_MAIN_SYNTH,
+    MODE_EDIT_SYNTH,
+    MODE_COUNT
+};
+
 class IO_ControllerAkaiMPKmini
 {
 protected:
     IO_AudioLoop *loopPadPressed = NULL;
     bool loopPadPressedDidAction = false;
-    bool mode = false;
+    byte mode = MODE_MAIN_ARP;
 
     IO_AudioLoop **loops;
     IO_AudioSynth **synths;
@@ -23,6 +31,8 @@ protected:
     IO_AudioSynth *synth;
 
     IO_Display *display;
+
+    bool modeSustainPressed = false;
 
 public:
     byte currentPattern = 0;
@@ -52,6 +62,11 @@ public:
 
     void noteOnHandler(byte channel, byte note, byte velocity)
     {
+        if (modeSustainPressed) {
+            mode = note - 48;
+            return;
+        }
+
         if (channel == 10)
         {
             if (note == 36)
@@ -73,7 +88,7 @@ public:
             return;
         }
 
-        if (arpMode)
+        if (mode == MODE_MAIN_ARP) // should synth_edit also allow arp mode
         {
             loop->noteOn(note);
         }
@@ -141,7 +156,8 @@ public:
             return;
         }
 
-        if (arpMode)
+        // should just off all ??
+        if (mode == MODE_MAIN_ARP)
         {
             loop->noteOff(note);
         }
@@ -184,10 +200,9 @@ public:
 
         if (control == 64) // when pressin sustain button
         {
-            mode = value == 127;
-            // mode = value != 127;
+            modeSustainPressed = value == 127;
         }
-        else if (mode)
+        else if (mode == MODE_EDIT_SYNTH)
         {
             // bottom row
             if (control == 13)
@@ -221,7 +236,7 @@ public:
                 display->displayValue("Level", value);
             }
         }
-        else
+        else // MODE_MAIN_ARP || MODE_MAIN_SYNTH
         {
             // bottom row
             if (control == 13)
