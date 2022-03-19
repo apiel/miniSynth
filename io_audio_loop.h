@@ -5,7 +5,7 @@
 
 #include "Pattern.h"
 #include "io_arp_patterns.h"
-#include "audio/io_audio_synth.h""
+#include "audio/io_audio_synth.h"
 
 #define REF_NOTE _C4
 #define PATTERN_SELECTOR_COUNT 4
