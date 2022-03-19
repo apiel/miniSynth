@@ -4,6 +4,8 @@
 #include <Arduino.h>
 #include <Metro.h>
 
+#include "io_instrument_list.h"
+
 // 4 ♬ ♬ step per beat
 #define STEP_PER_BEAT 4
 #define BPM_START 73
@@ -21,12 +23,12 @@ void setTempo(byte value) {
 
 void tempoInit() { setTempo(bpm - BPM_START); }
 
-void tempoLoop() {
+void tempoLoop(IO_AudioLoop **loops) {
     if (timer.check() == 1) {
         timer.reset();
-        // for (byte pos = 0; pos < INSTRUMENT_COUNT; pos++) {
-        //     getInstrument(pos)->loop->next();
-        // }
+        for (byte pos = 0; pos < SYNTH_COUNT; pos++) {
+            loops[pos]->next();
+        }
     }
 }
 

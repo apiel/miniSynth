@@ -5,7 +5,7 @@
 
 #include "Pattern.h"
 #include "io_arp_patterns.h"
-#include "audio/io_audio_env.h"
+#include "audio/io_audio_synth.h""
 
 #define REF_NOTE _C4
 #define PATTERN_SELECTOR_COUNT 4
@@ -23,7 +23,7 @@
 class IO_AudioLoop
 {
 private:
-    IO_AudioEnv *env;
+    IO_AudioSynth *env;
 
     byte currentStep = 0;
     Step lastStep;
@@ -41,12 +41,12 @@ public:
     byte nextPattern = 0;
     Pattern *pattern = &patterns[nextPattern];
 
-    IO_AudioLoop(IO_AudioEnv *_env, byte _id) : IO_AudioLoop(_env)
+    IO_AudioLoop(IO_AudioSynth *_env, byte _id) : IO_AudioLoop(_env)
     {
         id = id;
     }
 
-    IO_AudioLoop(IO_AudioEnv *_env)
+    IO_AudioLoop(IO_AudioSynth *_env)
     {
         env = _env;
         setCurrentPatternSelector(currentPatternSelector);

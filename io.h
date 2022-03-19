@@ -39,7 +39,7 @@ void ioInit()
 
     AudioMemory(25);
 
-    midiInit();
+    ioMidi.init(&controller);
 
     display.update();
     tempoInit();
@@ -47,9 +47,9 @@ void ioInit()
 
 void ioLoop()
 {
-    midiLoop();
+    ioMidi.loop();
     display.loop();
-    tempoLoop();
+    tempoLoop(loopsPtr);
 }
 
 #endif

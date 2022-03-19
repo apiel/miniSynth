@@ -79,6 +79,7 @@ public:
         }
         else
         {
+
             synth->noteOn(note, velocity);
         }
     }
@@ -150,7 +151,7 @@ public:
         }
     }
 
-    void controlChangeHandler(byte channel, byte control, int8_t direction, byte value)
+    void controlChangeHandler(byte channel, byte control, byte value)
     {
         if (loopPadPressed)
         {
