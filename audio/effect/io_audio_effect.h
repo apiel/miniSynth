@@ -5,6 +5,7 @@
 #include <Audio.h>
 
 #include "AudioEffectDistortion.h"
+#include "../audio_dumb.h"
 
 enum
 {
@@ -13,29 +14,47 @@ enum
     IFX_COUNT
 };
 
-class IO_AudioEffect : public AudioStream
+class IO_AudioEffect
 {
 protected:
-    audio_block_t *inputQueueArray[1];
-
+    AudioDumb dumb;
     AudioEffectDistortion dist;
 
 public:
-    byte currentEffect = IFX_OFF;
+    byte currentEffect = IFX_DIST;
 
-    IO_AudioEffect(void) : AudioStream(1, inputQueueArray) {}
+    AudioStream *stream;
 
-    void update()
+    IO_AudioEffect(void)
     {
+        setEffect(IFX_OFF);
+    }
+
+    void setEffect(byte value)
+    {
+        currentEffect = value % IFX_COUNT;
+        // should we somehow release some block here??
         if (currentEffect == IFX_OFF)
         {
-            audio_block_t *block;
-            block = AudioStream::receiveReadOnly();
-            if (!block)
-                return;
-            AudioStream::transmit(block);
-            AudioStream::release(block);
-            return;
+            stream = &dumb;
+        }
+        else if (currentEffect == IFX_DIST)
+        {
+            stream = &dist;
+        }
+    }
+
+    const char *getName()
+    {
+
+        switch (currentEffect)
+        {
+        case IFX_OFF:
+            return "Off";
+        case IFX_DIST:
+            return "Distortion";
+        default:
+            return "unknown yet";
         }
     }
 };

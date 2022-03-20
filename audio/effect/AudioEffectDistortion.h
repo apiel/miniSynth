@@ -19,20 +19,6 @@ class AudioEffectDistortion : public AudioEffectWaveshaper {
 
     AudioEffectDistortion(void) { distortion(50); };
 
-    void update() {
-        // should it just return the block if amount is 0 instead to have this toggle feature...
-        // or have a main effect selector
-        if (bypassed || amount == 0) {
-            audio_block_t *block;
-            block = AudioStream::receiveReadOnly();
-            if (!block) return;
-            AudioStream::transmit(block);
-            AudioStream::release(block);
-            return;
-        }
-        AudioEffectWaveshaper::update();
-    }
-
     void distortion(float _amount) {
         amount = _amount;
         if (amount > 0) {
@@ -51,12 +37,7 @@ class AudioEffectDistortion : public AudioEffectWaveshaper {
         distortion(amount);
     }
 
-    void enable() { bypassed = false; }
-    void bypass() { bypassed = true; }
-    void toggle() { bypassed = !bypassed; }
-
    private:
-    bool bypassed = false;
     float waveshapeData[WAVESHAPE_SIZE];
 };
 

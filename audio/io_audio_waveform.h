@@ -32,7 +32,7 @@ public:
 
     void setWaveform(byte value)
     {
-        currentWave = (value / 127.0f) * 13;
+        currentWave = (value / 128.0f) * 13;
 
         AudioNoInterrupts();
         begin(currentWave);
