@@ -1,21 +1,5 @@
-- save synth
-- save kick
-- save pattern
+- drum pattern (using sample?)
 
-- use AudioSynthWaveformModulated in synth and modulation
+- mode filter that can change filter from the 4 voice
 
-- use btn view in mc mode in pattern
-- pattern remove duration. only use slide/tie
-
-- fix kick filter
-- set another path for kick pattern
-
-- main view
-    - change bpm
-    - stop all (/ play all ?)
-    - volume
-    - see playing insturment
-    
-- project folder
-
-- create custom square / tri-saw wave like i could do with an envelope
+- mode lock
