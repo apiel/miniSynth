@@ -28,12 +28,15 @@ protected:
     unsigned int msVal = 0;
     const char *msValName = NULL;
 
+    const char *stringVal = NULL;
+    const char *stringName = NULL;
+
     void render(unsigned int *forceRefreshIn)
     {
         d.clearDisplay();
         d.setCursor(0, 0);
 
-        if (displayValName) // should move this in io_audio_base
+        if (displayValName)
         {
             d.println(displayValName);
             d.println("");
@@ -43,13 +46,22 @@ protected:
             displayValName = NULL;
             *forceRefreshIn = 2000;
         }
-        else if (msValName) // should move this in io_audio_base
+        else if (msValName)
         {
             d.println(msValName);
             d.setTextSize(3);
             d.printf("\n%dms\n", msVal);
             d.setTextSize(1);
             msValName = NULL;
+            *forceRefreshIn = 2000;
+        }
+        else if (stringName)
+        {
+            d.println(stringName);
+            d.setTextSize(3);
+            d.printf("\n%s\n", stringVal);
+            d.setTextSize(1);
+            stringName = NULL;
             *forceRefreshIn = 2000;
         }
         else
@@ -117,6 +129,12 @@ public:
     {
         msVal = value;
         msValName = name;
+    }
+
+    void displayString(const char *name, const char *value)
+    {
+        stringVal = value;
+        stringName = name;
     }
 };
 

@@ -6,7 +6,7 @@
 #include "./io_controller_akai_mpk_mini_main.h"
 #include "./io_controller_akai_mpk_mini_edit_synth.h"
 
-class IO_ControllerAkaiMPKmini: IO_ControllerAkaiMPKminiMain, IO_ControllerAkaiMPKminiEditSynth
+class IO_ControllerAkaiMPKmini : IO_ControllerAkaiMPKminiMain, IO_ControllerAkaiMPKminiEditSynth
 {
 public:
     IO_ControllerAkaiMPKmini(IO_Display *_display, IO_AudioLoop **_loops, IO_AudioSynth **_synths)
@@ -20,7 +20,8 @@ public:
 
     void noteOnHandler(byte channel, byte note, byte velocity)
     {
-        if (modeSustainPressed) {
+        if (modeSustainPressed)
+        {
             mode = note - 48;
             return;
         }
@@ -61,10 +62,16 @@ public:
         if (loop->id != id)
         {
             setCurrentSynth(id);
+            display->displayValue("Current synth", id);
         }
         else if (!loopPadPressedDidAction)
         {
             loop->toggleMode();
+            if (loop->modeSingleLoop) {
+                display->displayString("ARP mode", "loop");
+            } else {
+                display->displayString("ARP mode", "one");
+            }
         }
         loopPadPressed = NULL;
         loopPadPressedDidAction = false;
