@@ -8,14 +8,14 @@
 #include "io_audio_filter_ladder.h"
 #include "io_audio_waveform.h"
 #include "io_audio_env.h"
+#include "effect/io_audio_effect.h"
 #include "note.h"
-#include "../effect/AudioEffectDistortion.h"
 
 class IO_AudioSynth : public IO_AudioEnv
 {
 public:
     IO_AudioWaveform wave;
-    // AudioEffectDistortion distortion;
+    IO_AudioEffect effect;
     IO_AudioFilter filter;
     IO_AudioFilterLadder filterLadder;
 
@@ -25,7 +25,8 @@ public:
 
     AudioConnection *patchCordWaveToFilter;
     AudioConnection *patchCordFilterToFilterLadder;
-    AudioConnection *patchCordFilterLadderToEnvOutput;
+    AudioConnection *patchCordFilterLadderToEffect;
+    AudioConnection *patchCordEffectToEnvOutput;
     // AudioConnection *patchCordFilterToDistortion;
     // AudioConnection *patchCordDistortionToOutput;
 
@@ -33,10 +34,8 @@ public:
     {
         patchCordWaveToFilter = new AudioConnection(wave, filter);
         patchCordFilterToFilterLadder = new AudioConnection(filter, filterLadder);
-        patchCordFilterLadderToEnvOutput = new AudioConnection(filterLadder, *this);
-
-        // patchCordFilterToDistortion = new AudioConnection(filter, distortion);
-        // patchCordDistortionToOutput = new AudioConnection(distortion, *this);
+        patchCordFilterLadderToEffect = new AudioConnection(filterLadder, effect);
+        patchCordEffectToEnvOutput = new AudioConnection(effect, *this);
 
         setLevel(level);
         wave.begin();
