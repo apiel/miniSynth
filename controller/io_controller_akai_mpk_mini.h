@@ -9,6 +9,16 @@
 #include "../io_instrument_list.h"
 #include "../io_display.h"
 
+#define PAD_CHANNEL 10
+#define PAD_1 36
+#define PAD_2 37
+#define PAD_3 38
+#define PAD_4 39
+#define PAD_5 40
+#define PAD_6 41
+#define PAD_7 42
+#define PAD_8 43
+
 enum
 {
     MODE_MAIN_ARP,
@@ -68,21 +78,21 @@ public:
             return;
         }
 
-        if (channel == 10)
+        if (channel == PAD_CHANNEL)
         {
-            if (note == 36)
+            if (note == PAD_1)
             {
                 loopPadPressed = getLoop(SYNTH_0);
             }
-            else if (note == 37)
+            else if (note == PAD_2)
             {
                 loopPadPressed = getLoop(SYNTH_1);
             }
-            else if (note == 38)
+            else if (note == PAD_3)
             {
                 loopPadPressed = getLoop(SYNTH_2);
             }
-            else if (note == 39)
+            else if (note == PAD_4)
             {
                 loopPadPressed = getLoop(SYNTH_3);
             }
@@ -115,40 +125,40 @@ public:
 
     void noteOffHandler(byte channel, byte note, byte velocity)
     {
-        if (channel == 10)
+        if (channel == PAD_CHANNEL)
         {
-            if (note == 36)
+            if (note == PAD_1)
             {
                 loopPadPressedAction(0);
             }
-            else if (note == 37)
+            else if (note == PAD_2)
             {
                 loopPadPressedAction(1);
             }
-            else if (note == 38)
+            else if (note == PAD_3)
             {
                 loopPadPressedAction(2);
             }
-            else if (note == 39)
+            else if (note == PAD_4)
             {
                 loopPadPressedAction(3);
             }
-            else if (note == 40)
+            else if (note == PAD_5)
             {
                 loop->setCurrentPatternSelector(0);
                 display->displayValue("Pattern selector 0", loop->patternSelector[0]);
             }
-            else if (note == 41)
+            else if (note == PAD_6)
             {
                 loop->setCurrentPatternSelector(1);
                 display->displayValue("Pattern selector 1", loop->patternSelector[1]);
             }
-            else if (note == 42)
+            else if (note == PAD_7)
             {
                 loop->setCurrentPatternSelector(2);
                 display->displayValue("Pattern selector 2", loop->patternSelector[2]);
             }
-            else if (note == 43)
+            else if (note == PAD_8)
             {
                 loop->setCurrentPatternSelector(3);
                 display->displayValue("Pattern selector 3", loop->patternSelector[3]);
