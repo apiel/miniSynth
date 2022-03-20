@@ -42,7 +42,8 @@ protected:
             if (displayValUnit)
             {
                 d.setTextSize(3);
-                d.printf("%d%s\n", displayVal, displayValUnit);
+                d.print(displayVal);
+                d.print(displayValUnit);
             }
             else
             {
