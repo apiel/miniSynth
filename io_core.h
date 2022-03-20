@@ -7,7 +7,7 @@
 #include "audio/io_audio_synth.h"
 #include "io_audio_loop.h"
 #include "io_instrument_list.h"
-#include "controller/io_controller_akai_mpk_mini.h"
+#include "controller/akai_mpk_mini/io_controller_akai_mpk_mini.h"
 
 IO_AudioSynth synths[SYNTH_COUNT];
 IO_AudioSynth *synthsPtr[SYNTH_COUNT] = {&synths[SYNTH_0], &synths[SYNTH_1], &synths[SYNTH_2], &synths[SYNTH_3]};

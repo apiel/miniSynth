@@ -1,56 +1,14 @@
-#ifndef IO_AUDIO_BASE_H_
-#define IO_AUDIO_BASE_H_
+#ifndef IO_CONTROLLER_AKAI_MPK_MINI_H_
+#define IO_CONTROLLER_AKAI_MPK_MINI_H_
 
 #include <Arduino.h>
-#include <Audio.h>
 
-#include "../audio/io_audio_synth.h"
-#include "../io_audio_loop.h"
-#include "../io_instrument_list.h"
-#include "../io_display.h"
+#include "./io_controller_akai_mpk_mini_main.h"
+#include "./io_controller_akai_mpk_mini_edit_synth.h"
 
-#define PAD_CHANNEL 10
-#define PAD_1 36
-#define PAD_2 37
-#define PAD_3 38
-#define PAD_4 39
-#define PAD_5 40
-#define PAD_6 41
-#define PAD_7 42
-#define PAD_8 43
-
-enum
+class IO_ControllerAkaiMPKmini: IO_ControllerAkaiMPKminiMain, IO_ControllerAkaiMPKminiEditSynth
 {
-    MODE_MAIN_ARP,
-    MODE_MAIN_SYNTH,
-    MODE_EDIT_SYNTH,
-    MODE_COUNT
-};
-
-class IO_ControllerAkaiMPKmini
-{
-protected:
-    IO_AudioLoop *loopPadPressed = NULL;
-    bool loopPadPressedDidAction = false;
-    byte mode = MODE_MAIN_ARP;
-
-    IO_AudioLoop **loops;
-    IO_AudioSynth **synths;
-
-    IO_AudioLoop *loop;
-    IO_AudioSynth *synth;
-
-    IO_Display *display;
-
-    bool modeSustainPressed = false;
-
 public:
-    byte currentPattern = 0;
-    Pattern *pattern;
-
-    // for the moment will always be arpMode
-    bool arpMode = true;
-
     IO_ControllerAkaiMPKmini(IO_Display *_display, IO_AudioLoop **_loops, IO_AudioSynth **_synths)
     {
         display = _display;
@@ -58,17 +16,6 @@ public:
         synths = _synths;
         loop = getLoop(0);
         synth = getSynth(0);
-    }
-
-    IO_AudioSynth *getSynth(byte pos) { return synths[pos % SYNTH_COUNT]; }
-    IO_AudioLoop *getLoop(byte pos) { return loops[pos % SYNTH_COUNT]; }
-
-    void setCurrentSynth(byte value)
-    {
-        byte pos = value % SYNTH_COUNT;
-        Serial.printf("Set current synth %d\n", pos);
-        loop = getLoop(pos);
-        synth = getSynth(pos);
     }
 
     void noteOnHandler(byte channel, byte note, byte velocity)
@@ -214,78 +161,11 @@ public:
         }
         else if (mode == MODE_EDIT_SYNTH)
         {
-            // bottom row
-            if (control == 13)
-            {
-                synth->wave.setWaveform(value);
-            }
-            else if (control == 14)
-            {
-                synth->wave.edit(value);
-                display->displayValue("Wave edit", value);
-            }
-            else if (control == 15)
-            {
-            }
-            else if (control == 16)
-            {
-            }
-            // top row
-            else if (control == 17)
-            {
-            }
-            else if (control == 18)
-            {
-            }
-            else if (control == 19)
-            {
-            }
-            else if (control == 20)
-            {
-                synth->setLevel(value);
-                display->displayValue("Level", value);
-            }
+            controlChangeHandlerEditSynth(channel, control, value);
         }
         else // MODE_MAIN_ARP || MODE_MAIN_SYNTH
         {
-            // bottom row
-            if (control == 13)
-            {
-                synth->filter.setResonance(value);
-                display->displayValue("Resonnance", value);
-            }
-            else if (control == 14)
-            {
-                synth->filterLadder.setResonance(value);
-                display->displayValue("Ladder Resonnance", value);
-            }
-            else if (control == 15)
-            {
-            }
-            else if (control == 16)
-            {
-                synth->setRelease(value);
-                display->displayMs("Env. Release", synth->releaseMs);
-            }
-            // top row
-            else if (control == 17)
-            {
-                synth->filter.setCutoff(value);
-                display->displayValue("Cutoff", value);
-            }
-            else if (control == 18)
-            {
-                synth->filterLadder.setCutoff(value);
-                display->displayValue("Ladder Cutoff", value);
-            }
-            else if (control == 19)
-            {
-            }
-            else if (control == 20)
-            {
-                synth->setAttack(value);
-                display->displayMs("Env. Attack", synth->attackMs);
-            }
+            controlChangeHandlerMain(channel, control, value);
         }
     }
 };

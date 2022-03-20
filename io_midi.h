@@ -5,7 +5,6 @@
 #include <USBHost_t36.h>
 
 #include "io_display.h"
-#include "controller/io_controller_akai_mpk_mini.h"
 #include "io_core.h"
 
 #define MIDI_COUNT 4
