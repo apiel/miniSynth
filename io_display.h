@@ -6,6 +6,7 @@
 #include <Adafruit_GFX.h>
 #include <SPI.h>
 #include <Wire.h>
+#include <string.h>
 
 #define SCREEN_W 128 // OLED display width, in pixels
 #define SCREEN_H 64  // OLED display height, in pixels
@@ -22,11 +23,9 @@ protected:
     bool needDisplayUpdate = false;
     unsigned int forceRefreshIn = 0;
 
-    byte displayVal = 0;
+    unsigned int displayVal = 0;
     const char *displayValName = NULL;
-
-    unsigned int msVal = 0;
-    const char *msValName = NULL;
+    const char *displayValUnit = NULL;
 
     const char *stringVal = NULL;
     const char *stringName = NULL;
@@ -40,26 +39,28 @@ protected:
         {
             d.println(displayValName);
             d.println("");
-            d.setTextSize(6);
-            d.println(displayVal);
+            if (displayValUnit)
+            {
+                d.setTextSize(3);
+                d.printf("%d%s\n", displayVal, displayValUnit);
+            }
+            else
+            {
+                d.setTextSize(5);
+                d.println(displayVal);
+            }
             d.setTextSize(1);
+
             displayValName = NULL;
-            *forceRefreshIn = 2000;
-        }
-        else if (msValName)
-        {
-            d.println(msValName);
-            d.setTextSize(3);
-            d.printf("\n%dms\n", msVal);
-            d.setTextSize(1);
-            msValName = NULL;
+            displayValUnit = NULL;
             *forceRefreshIn = 2000;
         }
         else if (stringName)
         {
             d.println(stringName);
-            d.setTextSize(3);
-            d.printf("\n%s\n", stringVal);
+            d.println("");
+            d.setTextSize(strlen(stringVal) > 5 ? 2 : 3);
+            d.println(stringVal);
             d.setTextSize(1);
             stringName = NULL;
             *forceRefreshIn = 2000;
@@ -119,16 +120,16 @@ public:
         }
     }
 
-    void displayValue(const char *name, byte value)
+    void displayValue(const char *name, unsigned int value)
     {
         displayVal = value;
         displayValName = name;
     }
 
-    void displayMs(const char *name, unsigned int value)
+    void displayUnit(const char *name, unsigned int value, const char *unit)
     {
-        msVal = value;
-        msValName = name;
+        displayValUnit = unit;
+        displayValue(name, value);
     }
 
     void displayString(const char *name, const char *value)

@@ -14,6 +14,7 @@ public:
         if (control == 13)
         {
             synth->wave.setWaveform(value);
+            display->displayString("Set wave", synth->wave.getName());
         }
         else if (control == 14)
         {
@@ -29,17 +30,21 @@ public:
         // top row
         else if (control == 17)
         {
+            synth->setAttack(value);
+            display->displayUnit("Env. Attack", synth->attackMs, "ms");
         }
         else if (control == 18)
         {
+            synth->setRelease(value);
+            display->displayUnit("Env. Release", synth->releaseMs, "ms");
         }
         else if (control == 19)
         {
+            synth->setLevel(value);
+            display->displayValue("Level", value);
         }
         else if (control == 20)
         {
-            synth->setLevel(value);
-            display->displayValue("Level", value);
         }
     }
 };

@@ -26,8 +26,6 @@ public:
         }
         else if (control == 16)
         {
-            synth->setRelease(value);
-            display->displayMs("Env. Release", synth->releaseMs);
         }
         // top row
         else if (control == 17)
@@ -45,8 +43,6 @@ public:
         }
         else if (control == 20)
         {
-            synth->setAttack(value);
-            display->displayMs("Env. Attack", synth->attackMs);
         }
     }
 };
