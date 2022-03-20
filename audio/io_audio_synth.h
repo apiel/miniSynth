@@ -54,8 +54,6 @@ public:
 
     void noteOn(byte note, byte velocity)
     {
-        Serial.println("note on in IO_AudioSynth");
-
         lastNote = note;
 
         // float _amp = amplitude * velocity / 127;

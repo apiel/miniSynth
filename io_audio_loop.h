@@ -43,7 +43,7 @@ public:
 
     IO_AudioLoop(IO_AudioSynth *_env, byte _id) : IO_AudioLoop(_env)
     {
-        id = id;
+        id = _id;
     }
 
     IO_AudioLoop(IO_AudioSynth *_env)

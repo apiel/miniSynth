@@ -56,6 +56,7 @@ public:
     void setCurrentSynth(byte value)
     {
         byte pos = value % SYNTH_COUNT;
+        Serial.printf("Set current synth %d\n", pos);
         loop = getLoop(pos);
         synth = getSynth(pos);
     }
@@ -94,7 +95,6 @@ public:
         }
         else
         {
-
             synth->noteOn(note, velocity);
         }
     }

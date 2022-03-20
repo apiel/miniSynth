@@ -35,7 +35,6 @@ public:
 
     void noteOn(byte note, byte velocity)
     {
-        Serial.println("note on in IO_AudioEnv");
         AudioEffectEnvelope::noteOn();
     }
 
