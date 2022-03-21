@@ -177,7 +177,7 @@ public:
             modeSustainPressed = value == 127;
             display->displayString("Mode", getModeName());
         }
-        else if (mode == MODE_EDIT_SYNTH)
+        else if (mode == MODE_EDIT_SYNTH || modeSustainPressed)
         {
             controlChangeHandlerEditSynth(channel, control, value);
         }
