@@ -24,10 +24,16 @@ protected:
     AudioEffectDistortion dist;
 
 public:
-    byte currentEffect = IFX_DIST; 
-    // byte currentEffect = IFX_OFF;
+    AudioDumb input;
+    AudioDumb output;
 
-    AudioStream *stream;
+    AudioConnection patches[IFX_COUNT][2] = {
+        {AudioConnection(input, dumb), AudioConnection(dumb, output)}, // OFF
+        {AudioConnection(input, dist), AudioConnection(dist, output)}  // IFX_DIST
+    };
+
+    byte currentEffect = IFX_DIST;
+    // byte currentEffect = IFX_OFF;
 
     IO_AudioEffect(void)
     {
@@ -38,13 +44,18 @@ public:
     {
         currentEffect = value % IFX_COUNT;
         // should we somehow release some block here??
-        if (currentEffect == IFX_OFF)
+        for (byte i = 0; i < IFX_COUNT; i++)
         {
-            stream = &dumb;
-        }
-        else if (currentEffect == IFX_DIST)
-        {
-            stream = &dist;
+            if (i == currentEffect)
+            {
+                patches[i][0].connect();
+                patches[i][1].connect();
+            }
+            else
+            {
+                patches[i][0].disconnect();
+                patches[i][1].disconnect();
+            }
         }
     }
 

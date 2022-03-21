@@ -34,8 +34,8 @@ public:
     {
         patchCordWaveToFilter = new AudioConnection(wave, filter);
         patchCordFilterToFilterLadder = new AudioConnection(filter, filterLadder);
-        patchCordFilterLadderToEffect = new AudioConnection(filterLadder, *effect.stream);
-        patchCordEffectToEnvOutput = new AudioConnection(*effect.stream, *this);
+        patchCordFilterLadderToEffect = new AudioConnection(filterLadder, effect.input);
+        patchCordEffectToEnvOutput = new AudioConnection(effect.output, *this);
 
         setLevel(level);
         wave.begin();
