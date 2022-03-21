@@ -60,6 +60,22 @@ public:
         loop = getLoop(pos);
         synth = getSynth(pos);
     }
+
+    const char *getModeName()
+    {
+
+        switch (mode)
+        {
+        case MODE_MAIN_ARP:
+            return "Live ARP";
+        case MODE_MAIN_SYNTH:
+            return "Live synth";
+        case MODE_EDIT_SYNTH:
+            return "Edit synth";
+        default:
+            return "unknown yet";
+        }
+    }
 };
 
 #endif

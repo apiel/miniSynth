@@ -6,3 +6,11 @@
 - mode filter that can change filter from the 4 voice
 
 - mode lock
+
+- should all the / 127.0f be / 128.0f ?
+
+- display waveform as default view
+
+Some stuff to look at:
+- https://github.com/jcugnoni/TeensyDist
+- https://github.com/Tympan/Tympan_Library/tree/main/src

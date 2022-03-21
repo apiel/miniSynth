@@ -23,6 +23,7 @@ public:
         if (modeSustainPressed)
         {
             mode = note - 48;
+            display->displayString("Mode", getModeName());
             return;
         }
 
@@ -67,9 +68,12 @@ public:
         else if (!loopPadPressedDidAction)
         {
             loop->toggleMode();
-            if (loop->modeSingleLoop) {
+            if (loop->modeSingleLoop)
+            {
                 display->displayString("ARP mode", "loop");
-            } else {
+            }
+            else
+            {
                 display->displayString("ARP mode", "one");
             }
         }
@@ -79,6 +83,12 @@ public:
 
     void noteOffHandler(byte channel, byte note, byte velocity)
     {
+        if (modeSustainPressed)
+        {
+            display->displayString("Mode", getModeName());
+            return;
+        }
+
         if (channel == PAD_CHANNEL)
         {
             if (note == PAD_1)
@@ -165,6 +175,7 @@ public:
         if (control == 64) // when pressin sustain button
         {
             modeSustainPressed = value == 127;
+            display->displayString("Mode", getModeName());
         }
         else if (mode == MODE_EDIT_SYNTH)
         {

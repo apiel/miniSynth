@@ -26,6 +26,8 @@ public:
         }
         else if (control == 16)
         {
+            synth->effect.setEffect((value / 128.0f) * IFX_COUNT);
+            display->displayString("Set effect", synth->effect.getName());
         }
         // top row
         else if (control == 17)
