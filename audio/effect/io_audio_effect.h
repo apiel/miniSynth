@@ -7,7 +7,7 @@
 #include "AudioEffectDistortion.h"
 #include "../audio_dumb.h"
 
-#define CHORUS_DELAY_LENGTH (16 * AUDIO_BLOCK_SAMPLES)
+#define DELAYLINE_LENGTH (16 * AUDIO_BLOCK_SAMPLES)
 
 enum
 {
@@ -17,13 +17,14 @@ enum
     IFX_RECTIFIER,
     IFX_BITCRUSHER,
     IFX_CHORUS,
+    IFX_FLANGE,
     IFX_COUNT
 };
 
 class IO_AudioEffect
 {
 protected:
-    short delayline[CHORUS_DELAY_LENGTH];
+    short delayline[DELAYLINE_LENGTH];
 
     AudioDumb dumb;
     AudioEffectDistortion dist;
@@ -31,6 +32,7 @@ protected:
     AudioEffectRectifier rectifier;
     AudioEffectBitcrusher bitcrusher;
     AudioEffectChorus chorus;
+    AudioEffectFlange flange;
 
     // to use more waveshaper
     // https://www.youtube.com/watch?v=1L9djVLaUSU
@@ -47,7 +49,8 @@ public:
         {AudioConnection(input, reverb), AudioConnection(reverb, output)},         // IFX_REVERB
         {AudioConnection(input, rectifier), AudioConnection(rectifier, output)},   // IFX_RECTIFIER
         {AudioConnection(input, bitcrusher), AudioConnection(bitcrusher, output)}, // IFX_BITCRUSHER
-        {AudioConnection(input, chorus), AudioConnection(chorus, output)}          // IFX_CHORUS
+        {AudioConnection(input, chorus), AudioConnection(chorus, output)},         // IFX_CHORUS
+        {AudioConnection(input, flange), AudioConnection(flange, output)}          // IFX_FLANGE
     };
 
     byte currentEffect = IFX_OFF;
@@ -64,7 +67,10 @@ public:
         switch (currentEffect)
         {
         case IFX_CHORUS:
-            chorus.begin(delayline, CHORUS_DELAY_LENGTH, 2);
+            chorus.begin(delayline, DELAYLINE_LENGTH, 2);
+            break;
+        case IFX_FLANGE:
+            flange.begin(delayline, DELAYLINE_LENGTH, DELAYLINE_LENGTH / 4, DELAYLINE_LENGTH / 4, .5);
             break;
         default:
             break;
@@ -91,6 +97,9 @@ public:
         case IFX_CHORUS:
             chorus.voices((int)(pctVal * 16));
             break;
+        case IFX_FLANGE:
+            flange.voices((int)(edit2Value / 127.0f * 16), (int)(edit2Value / 127.0f * 16), ((edit1Value / 127.0f) * (edit1Value / 127.0f) * 44000.0f) + 100.0f);
+            break;
         default:
             break;
         }
@@ -115,6 +124,9 @@ public:
         case IFX_CHORUS:
             chorus.voices((int)(pctVal * 16));
             break;
+        case IFX_FLANGE:
+            flange.voices((int)(edit2Value / 127.0f * 16), (int)(edit2Value / 127.0f * 16), ((edit1Value / 127.0f) * (edit1Value / 127.0f) * 44000.0f) + 100.0f);
+            break;
         default:
             break;
         }
@@ -137,8 +149,10 @@ public:
             return "Bitcrusher";
         case IFX_CHORUS:
             return "Chorus";
+        case IFX_FLANGE:
+            return "Flange";
         default:
-            return "unknown yet";
+            return "Unknown";
         }
     }
 
