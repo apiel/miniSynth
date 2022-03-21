@@ -7,6 +7,8 @@
 #include "AudioEffectDistortion.h"
 #include "../audio_dumb.h"
 
+#define CHORUS_DELAY_LENGTH (16 * AUDIO_BLOCK_SAMPLES)
+
 enum
 {
     IFX_OFF,
@@ -14,28 +16,38 @@ enum
     IFX_REVERB,
     IFX_RECTIFIER,
     IFX_BITCRUSHER,
+    IFX_CHORUS,
     IFX_COUNT
 };
 
 class IO_AudioEffect
 {
 protected:
+    short delayline[CHORUS_DELAY_LENGTH];
+
     AudioDumb dumb;
     AudioEffectDistortion dist;
     AudioEffectFreeverb reverb;
     AudioEffectRectifier rectifier;
     AudioEffectBitcrusher bitcrusher;
+    AudioEffectChorus chorus;
+
+    // to use more waveshaper
+    // https://www.youtube.com/watch?v=1L9djVLaUSU
+
+    // make delay ~/Music/teensy/Audio/examples/Effects/Delay/Delay.ino
 
 public:
     AudioDumb input;
     AudioDumb output;
 
     AudioConnection patches[IFX_COUNT][2] = {
-        {AudioConnection(input, dumb), AudioConnection(dumb, output)},            // OFF
-        {AudioConnection(input, dist), AudioConnection(dist, output)},            // IFX_DIST
-        {AudioConnection(input, reverb), AudioConnection(reverb, output)},        // IFX_REVERB
-        {AudioConnection(input, rectifier), AudioConnection(rectifier, output)},  // IFX_RECTIFIER
-        {AudioConnection(input, bitcrusher), AudioConnection(bitcrusher, output)} // IFX_BITCRUSHER
+        {AudioConnection(input, dumb), AudioConnection(dumb, output)},             // OFF
+        {AudioConnection(input, dist), AudioConnection(dist, output)},             // IFX_DIST
+        {AudioConnection(input, reverb), AudioConnection(reverb, output)},         // IFX_REVERB
+        {AudioConnection(input, rectifier), AudioConnection(rectifier, output)},   // IFX_RECTIFIER
+        {AudioConnection(input, bitcrusher), AudioConnection(bitcrusher, output)}, // IFX_BITCRUSHER
+        {AudioConnection(input, chorus), AudioConnection(chorus, output)}          // IFX_CHORUS
     };
 
     byte currentEffect = IFX_OFF;
@@ -45,6 +57,18 @@ public:
     IO_AudioEffect(void)
     {
         setEffect(currentEffect);
+    }
+
+    void begin()
+    {
+        switch (currentEffect)
+        {
+        case IFX_CHORUS:
+            chorus.begin(delayline, CHORUS_DELAY_LENGTH, 2);
+            break;
+        default:
+            break;
+        }
     }
 
     void edit1(byte value)
@@ -63,6 +87,9 @@ public:
             break;
         case IFX_BITCRUSHER:
             bitcrusher.bits((byte)(pctVal * 16));
+            break;
+        case IFX_CHORUS:
+            chorus.voices((int)(pctVal * 16));
             break;
         default:
             break;
@@ -85,6 +112,9 @@ public:
         case IFX_BITCRUSHER:
             bitcrusher.sampleRate(pctVal * 44100);
             break;
+        case IFX_CHORUS:
+            chorus.voices((int)(pctVal * 16));
+            break;
         default:
             break;
         }
@@ -105,6 +135,8 @@ public:
             return "Rectifier";
         case IFX_BITCRUSHER:
             return "Bitcrusher";
+        case IFX_CHORUS:
+            return "Chorus";
         default:
             return "unknown yet";
         }
@@ -127,6 +159,7 @@ public:
                 patches[i][1].disconnect();
             }
         }
+        begin();
         edit1(edit1Value);
         edit2(edit2Value);
     }
