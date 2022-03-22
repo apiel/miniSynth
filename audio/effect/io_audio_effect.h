@@ -5,6 +5,7 @@
 #include <Audio.h>
 
 #include "io_audio_effect_distortion.h"
+#include "io_audio_effect_delay.h"
 #include "../audio_dumb.h"
 
 #define MEMORY_LEN (16 * AUDIO_BLOCK_SAMPLES)
@@ -19,6 +20,7 @@ enum
     IFX_CHORUS,
     IFX_FLANGE,
     IFX_GRANULAR,
+    IFX_DELAY,
     IFX_COUNT
 };
 
@@ -35,15 +37,12 @@ protected:
     AudioEffectChorus chorus;
     AudioEffectFlange flange;
     AudioEffectGranular granular;
+    IO_AudioEffectDelay delay;
 
     // to use more waveshaper
     // https://www.youtube.com/watch?v=1L9djVLaUSU
 
     // make delay ~/Music/teensy/Audio/examples/Effects/Delay/Delay.ino
-
-public:
-    AudioDumb input;
-    AudioDumb output;
 
     AudioConnection patches[IFX_COUNT][2] = {
         {AudioConnection(input, dumb), AudioConnection(dumb, output)},             // OFF
@@ -53,8 +52,13 @@ public:
         {AudioConnection(input, bitcrusher), AudioConnection(bitcrusher, output)}, // IFX_BITCRUSHER
         {AudioConnection(input, chorus), AudioConnection(chorus, output)},         // IFX_CHORUS
         {AudioConnection(input, flange), AudioConnection(flange, output)},         // IFX_FLANGE
-        {AudioConnection(input, granular), AudioConnection(granular, output)}      // IFX_GRANULAR
+        {AudioConnection(input, granular), AudioConnection(granular, output)},     // IFX_GRANULAR
+        {AudioConnection(input, delay.input), AudioConnection(delay.output, output)}            // IFX_DELAY
     };
+
+public:
+    AudioDumb input;
+    AudioDumb output;
 
     byte currentEffect = IFX_OFF;
     byte edit1Value = 0;
@@ -172,6 +176,8 @@ public:
             return "Flange";
         case IFX_GRANULAR:
             return "Granular";
+        case IFX_DELAY:
+            return "Delay";
         default:
             return "Unknown";
         }
@@ -200,5 +206,7 @@ public:
         edit2(edit2Value);
     }
 };
+
+#undef MEMORY_LEN
 
 #endif
