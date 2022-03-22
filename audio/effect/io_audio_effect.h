@@ -7,7 +7,7 @@
 #include "AudioEffectDistortion.h"
 #include "../audio_dumb.h"
 
-#define DELAYLINE_LENGTH (16 * AUDIO_BLOCK_SAMPLES)
+#define MEMORY_LEN (16 * AUDIO_BLOCK_SAMPLES)
 
 enum
 {
@@ -18,13 +18,14 @@ enum
     IFX_BITCRUSHER,
     IFX_CHORUS,
     IFX_FLANGE,
+    IFX_GRANULAR,
     IFX_COUNT
 };
 
 class IO_AudioEffect
 {
 protected:
-    short delayline[DELAYLINE_LENGTH];
+    short memoryLine[MEMORY_LEN];
 
     AudioDumb dumb;
     AudioEffectDistortion dist;
@@ -33,6 +34,7 @@ protected:
     AudioEffectBitcrusher bitcrusher;
     AudioEffectChorus chorus;
     AudioEffectFlange flange;
+    AudioEffectGranular granular;
 
     // to use more waveshaper
     // https://www.youtube.com/watch?v=1L9djVLaUSU
@@ -50,7 +52,8 @@ public:
         {AudioConnection(input, rectifier), AudioConnection(rectifier, output)},   // IFX_RECTIFIER
         {AudioConnection(input, bitcrusher), AudioConnection(bitcrusher, output)}, // IFX_BITCRUSHER
         {AudioConnection(input, chorus), AudioConnection(chorus, output)},         // IFX_CHORUS
-        {AudioConnection(input, flange), AudioConnection(flange, output)}          // IFX_FLANGE
+        {AudioConnection(input, flange), AudioConnection(flange, output)},         // IFX_FLANGE
+        {AudioConnection(input, granular), AudioConnection(granular, output)}      // IFX_GRANULAR
     };
 
     byte currentEffect = IFX_OFF;
@@ -67,10 +70,13 @@ public:
         switch (currentEffect)
         {
         case IFX_CHORUS:
-            chorus.begin(delayline, DELAYLINE_LENGTH, 2);
+            chorus.begin(memoryLine, MEMORY_LEN, 2);
             break;
         case IFX_FLANGE:
-            flange.begin(delayline, DELAYLINE_LENGTH, DELAYLINE_LENGTH / 4, DELAYLINE_LENGTH / 4, .5);
+            flange.begin(memoryLine, MEMORY_LEN, MEMORY_LEN / 4, MEMORY_LEN / 4, .5);
+            break;
+        case IFX_GRANULAR:
+            granular.begin(memoryLine, MEMORY_LEN);
             break;
         default:
             break;
@@ -100,6 +106,16 @@ public:
         case IFX_FLANGE:
             flange.voices((int)(edit2Value / 127.0f * 16), (int)(edit2Value / 127.0f * 16), ((edit1Value / 127.0f) * (edit1Value / 127.0f) * 44000.0f) + 100.0f);
             break;
+        case IFX_GRANULAR:
+            if (value == 127)
+            {
+                granular.stop();
+            }
+            else
+            {
+                granular.beginFreeze(value); // msec
+            }
+            break;
         default:
             break;
         }
@@ -127,6 +143,9 @@ public:
         case IFX_FLANGE:
             flange.voices((int)(edit2Value / 127.0f * 16), (int)(edit2Value / 127.0f * 16), ((edit1Value / 127.0f) * (edit1Value / 127.0f) * 44000.0f) + 100.0f);
             break;
+        case IFX_GRANULAR:
+            granular.setSpeed((pctVal * (8.0f - 0.125f)) + 0.125f); // The allowed range is 0.125 to 8.0, for ±3 octaves shift.
+            break;
         default:
             break;
         }
@@ -151,6 +170,8 @@ public:
             return "Chorus";
         case IFX_FLANGE:
             return "Flange";
+        case IFX_GRANULAR:
+            return "Granular";
         default:
             return "Unknown";
         }
@@ -173,6 +194,7 @@ public:
                 patches[i][1].disconnect();
             }
         }
+        granular.stop();
         begin();
         edit1(edit1Value);
         edit2(edit2Value);
