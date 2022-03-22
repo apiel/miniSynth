@@ -35,7 +35,9 @@ public:
     IO_DrumMachine()
     {
         setCurrentPatternSelector(currentPatternSelector);
+    }
 
+    void init() {
         if (!(SD.begin(BUILTIN_SDCARD)))
         {
             Serial.println("Unable to access the SD card");
@@ -77,6 +79,7 @@ public:
                     sprintf(filename, "raw/hithat/hithat1.raw");
                 }
 
+                // Serial.printf("play raw sample %s\n", filename);
                 sample.play(filename);
             }
         }

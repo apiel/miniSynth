@@ -19,6 +19,7 @@ void ioInit()
     // AudioMemory(480);
     AudioMemory(1024);
     
+    drumMachine.init();
     midiInit();
 
     display.update();
