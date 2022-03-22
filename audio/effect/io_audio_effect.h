@@ -4,7 +4,7 @@
 #include <Arduino.h>
 #include <Audio.h>
 
-#include "AudioEffectDistortion.h"
+#include "io_audio_effect_distortion.h"
 #include "../audio_dumb.h"
 
 #define MEMORY_LEN (16 * AUDIO_BLOCK_SAMPLES)
@@ -12,7 +12,7 @@
 enum
 {
     IFX_OFF,
-    IFX_DIST,
+    IFX_DISTORTION,
     IFX_REVERB,
     IFX_RECTIFIER,
     IFX_BITCRUSHER,
@@ -28,7 +28,7 @@ protected:
     short memoryLine[MEMORY_LEN];
 
     AudioDumb dumb;
-    AudioEffectDistortion dist;
+    IO_AudioEffectDistortion distortion;
     AudioEffectFreeverb reverb;
     AudioEffectRectifier rectifier;
     AudioEffectBitcrusher bitcrusher;
@@ -47,7 +47,7 @@ public:
 
     AudioConnection patches[IFX_COUNT][2] = {
         {AudioConnection(input, dumb), AudioConnection(dumb, output)},             // OFF
-        {AudioConnection(input, dist), AudioConnection(dist, output)},             // IFX_DIST
+        {AudioConnection(input, distortion), AudioConnection(distortion, output)}, // IFX_DISTORTION
         {AudioConnection(input, reverb), AudioConnection(reverb, output)},         // IFX_REVERB
         {AudioConnection(input, rectifier), AudioConnection(rectifier, output)},   // IFX_RECTIFIER
         {AudioConnection(input, bitcrusher), AudioConnection(bitcrusher, output)}, // IFX_BITCRUSHER
@@ -90,9 +90,9 @@ public:
         float pctVal = value / 127.0f;
         switch (currentEffect)
         {
-        case IFX_DIST:
+        case IFX_DISTORTION:
             // 1000.0f I am not sure why, maybe it can be more?
-            dist.distortion(pctVal * pctVal * 1000.0f);
+            distortion.distortion(pctVal * pctVal * 1000.0f);
             break;
         case IFX_REVERB:
             reverb.roomsize(pctVal);
@@ -128,8 +128,8 @@ public:
         float pctVal = value / 127.0f;
         switch (currentEffect)
         {
-        case IFX_DIST:
-            dist.setRange((pctVal * pctVal * 999.0f) + 1);
+        case IFX_DISTORTION:
+            distortion.setRange((pctVal * pctVal * 999.0f) + 1);
             break;
         case IFX_REVERB:
             reverb.damping(pctVal);
@@ -158,7 +158,7 @@ public:
         {
         case IFX_OFF:
             return "Off";
-        case IFX_DIST:
+        case IFX_DISTORTION:
             return "Distortion";
         case IFX_REVERB:
             return "Reverb";

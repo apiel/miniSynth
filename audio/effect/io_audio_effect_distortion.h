@@ -3,8 +3,8 @@
 // https://tonejs.github.io/docs/14.7.77/Distortion
 // https://github.com/Tonejs/Tone.js/blob/dev/Tone/effect/Distortion.ts
 
-#ifndef AudioEffectDistortion_h_
-#define AudioEffectDistortion_h_
+#ifndef IO_AudioEffectDistortion_h_
+#define IO_AudioEffectDistortion_h_
 
 #include <Arduino.h>
 #include <Audio.h>
@@ -12,12 +12,12 @@
 
 #define WAVESHAPE_SIZE 4097
 
-class AudioEffectDistortion : public AudioEffectWaveshaper {
+class IO_AudioEffectDistortion : public AudioEffectWaveshaper {
    public:
     float amount = 50;
     float range = 20.0;
 
-    AudioEffectDistortion(void) { distortion(50); };
+    IO_AudioEffectDistortion(void) { distortion(50); };
 
     void distortion(float _amount) {
         amount = _amount;
