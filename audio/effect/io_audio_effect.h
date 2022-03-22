@@ -37,12 +37,11 @@ protected:
     AudioEffectChorus chorus;
     AudioEffectFlange flange;
     AudioEffectGranular granular;
+    // might not want to use delay as it heavy load the memory
     IO_AudioEffectDelay delay;
 
     // to use more waveshaper
     // https://www.youtube.com/watch?v=1L9djVLaUSU
-
-    // make delay ~/Music/teensy/Audio/examples/Effects/Delay/Delay.ino
 
 public:
     AudioDumb input;
@@ -50,15 +49,15 @@ public:
 
     // need to be public, else no sound
     AudioConnection patches[IFX_COUNT][2] = {
-        {AudioConnection(input, dumb), AudioConnection(dumb, output)},             // OFF
-        {AudioConnection(input, distortion), AudioConnection(distortion, output)}, // IFX_DISTORTION
-        {AudioConnection(input, reverb), AudioConnection(reverb, output)},         // IFX_REVERB
-        {AudioConnection(input, rectifier), AudioConnection(rectifier, output)},   // IFX_RECTIFIER
-        {AudioConnection(input, bitcrusher), AudioConnection(bitcrusher, output)}, // IFX_BITCRUSHER
-        {AudioConnection(input, chorus), AudioConnection(chorus, output)},         // IFX_CHORUS
-        {AudioConnection(input, flange), AudioConnection(flange, output)},         // IFX_FLANGE
-        {AudioConnection(input, granular), AudioConnection(granular, output)},     // IFX_GRANULAR
-        {AudioConnection(input, delay.input), AudioConnection(delay.output, output)}            // IFX_DELAY
+        {AudioConnection(input, dumb), AudioConnection(dumb, output)},               // OFF
+        {AudioConnection(input, distortion), AudioConnection(distortion, output)},   // IFX_DISTORTION
+        {AudioConnection(input, reverb), AudioConnection(reverb, output)},           // IFX_REVERB
+        {AudioConnection(input, rectifier), AudioConnection(rectifier, output)},     // IFX_RECTIFIER
+        {AudioConnection(input, bitcrusher), AudioConnection(bitcrusher, output)},   // IFX_BITCRUSHER
+        {AudioConnection(input, chorus), AudioConnection(chorus, output)},           // IFX_CHORUS
+        {AudioConnection(input, flange), AudioConnection(flange, output)},           // IFX_FLANGE
+        {AudioConnection(input, granular), AudioConnection(granular, output)},       // IFX_GRANULAR
+        {AudioConnection(input, delay.input), AudioConnection(delay.output, output)} // IFX_DELAY
     };
 
     byte currentEffect = IFX_OFF;
