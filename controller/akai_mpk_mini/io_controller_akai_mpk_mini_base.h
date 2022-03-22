@@ -24,6 +24,7 @@ enum
     MODE_MAIN_ARP,
     MODE_MAIN_SYNTH,
     MODE_EDIT_SYNTH,
+    MODE_LOCK,
     MODE_COUNT
 };
 
@@ -72,6 +73,8 @@ public:
             return "Live synth";
         case MODE_EDIT_SYNTH:
             return "Edit synth";
+        case MODE_LOCK:
+            return "Locked";
         default:
             return "unknown yet";
         }

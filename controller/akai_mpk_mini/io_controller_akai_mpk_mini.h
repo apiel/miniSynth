@@ -23,6 +23,16 @@ public:
         if (modeSustainPressed)
         {
             mode = note - 48;
+            if (note == 72)
+            {
+                mode = MODE_LOCK;
+            }
+            display->displayString("Mode", getModeName());
+            return;
+        }
+
+        if (mode == MODE_LOCK)
+        {
             display->displayString("Mode", getModeName());
             return;
         }
@@ -89,6 +99,12 @@ public:
             return;
         }
 
+        if (mode == MODE_LOCK)
+        {
+            display->displayString("Mode", getModeName());
+            return;
+        }
+
         if (channel == PAD_CHANNEL)
         {
             if (note == PAD_1)
@@ -143,6 +159,18 @@ public:
 
     void controlChangeHandler(byte channel, byte control, byte value)
     {
+        if (control == 64) // when pressin sustain button
+        {
+            modeSustainPressed = value == 127;
+            display->displayString("Mode", getModeName());
+            return;
+        }
+        if (mode == MODE_LOCK)
+        {
+            display->displayString("Mode", getModeName());
+            return;
+        }
+
         if (loopPadPressed)
         {
             if (control == 17)
@@ -172,12 +200,7 @@ public:
             return;
         }
 
-        if (control == 64) // when pressin sustain button
-        {
-            modeSustainPressed = value == 127;
-            display->displayString("Mode", getModeName());
-        }
-        else if (mode == MODE_EDIT_SYNTH || modeSustainPressed)
+        if (mode == MODE_EDIT_SYNTH || modeSustainPressed)
         {
             controlChangeHandlerEditSynth(channel, control, value);
         }
