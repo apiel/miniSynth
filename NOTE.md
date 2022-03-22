@@ -4,6 +4,10 @@
     and then create a real arp
 
 - drum pattern (using sample?)
+    - key will select pattern
+    - there should be a pot to set starting point for key selection by default 0 to 25 but could start at 75 to 100...
+    - key can also select drum sound
+    - the same as for pattern, a pot should be able to select starting point
 
 - mode filter that can change filter from the 4 voice
 

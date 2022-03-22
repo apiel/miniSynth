@@ -29,7 +29,7 @@ void ioLoop()
 {
     midiLoop();
     display.loop();
-    tempoLoop(loopsPtr);
+    tempoLoop(loopsPtr, &drumMachine);
 }
 
 #endif

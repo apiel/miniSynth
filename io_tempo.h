@@ -23,12 +23,13 @@ void setTempo(byte value) {
 
 void tempoInit() { setTempo(bpm - BPM_START); }
 
-void tempoLoop(IO_AudioLoop **loops) {
+void tempoLoop(IO_AudioLoop **loops, IO_DrumMachine * drumMachine) {
     if (timer.check() == 1) {
         timer.reset();
         for (byte pos = 0; pos < SYNTH_COUNT; pos++) {
             loops[pos]->next();
         }
+        drumMachine->next();
     }
 }
 
