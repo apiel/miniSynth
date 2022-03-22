@@ -9,26 +9,25 @@
 class IO_AudioEffectDelay
 {
 protected:
-    AudioEffectDelay delay;
     AudioMixer4 mixer;
 
-    AudioConnection patches[6] = {
-        AudioConnection(input, delay),
-        AudioConnection(delay, 0, mixer, 0),
-        AudioConnection(delay, 1, mixer, 1),
-        AudioConnection(delay, 2, mixer, 2),
-        AudioConnection(delay, 3, mixer, 3),
-        AudioConnection(mixer, output)};
-
 public:
-    AudioDumb input;
+    AudioEffectDelay input;
     AudioDumb output;
+
+    // need to be public, else no sound
+    AudioConnection patches[5] = {
+        AudioConnection(input, 0, mixer, 0),
+        AudioConnection(input, 1, mixer, 1),
+        AudioConnection(input, 2, mixer, 2),
+        AudioConnection(input, 3, mixer, 3),
+        AudioConnection(mixer, output)};
 
     IO_AudioEffectDelay(void)
     {
-        delay.delay(0, 110);
-        delay.delay(1, 220);
-        delay.delay(2, 330);
+        input.delay(0, 110);
+        input.delay(1, 220);
+        input.delay(2, 330);
     }
 };
 

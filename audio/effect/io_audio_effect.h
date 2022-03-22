@@ -44,6 +44,11 @@ protected:
 
     // make delay ~/Music/teensy/Audio/examples/Effects/Delay/Delay.ino
 
+public:
+    AudioDumb input;
+    AudioDumb output;
+
+    // need to be public, else no sound
     AudioConnection patches[IFX_COUNT][2] = {
         {AudioConnection(input, dumb), AudioConnection(dumb, output)},             // OFF
         {AudioConnection(input, distortion), AudioConnection(distortion, output)}, // IFX_DISTORTION
@@ -55,10 +60,6 @@ protected:
         {AudioConnection(input, granular), AudioConnection(granular, output)},     // IFX_GRANULAR
         {AudioConnection(input, delay.input), AudioConnection(delay.output, output)}            // IFX_DELAY
     };
-
-public:
-    AudioDumb input;
-    AudioDumb output;
 
     byte currentEffect = IFX_OFF;
     byte edit1Value = 0;

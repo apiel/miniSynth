@@ -14,8 +14,11 @@ void ioInit()
     Serial.println("Mini synth init");
     display.init();
 
-    AudioMemory(25);
-
+    // AudioMemory(25);
+    // AudioMemory(120);
+    // AudioMemory(480);
+    AudioMemory(1024);
+    
     midiInit();
 
     display.update();
