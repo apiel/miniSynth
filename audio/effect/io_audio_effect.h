@@ -178,9 +178,8 @@ public:
             return "Granular";
         case IFX_DELAY:
             return "Delay";
-        default:
-            return "Unknown";
         }
+        return "Unknown";
     }
 
     void setEffect(byte value)

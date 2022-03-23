@@ -43,6 +43,7 @@ public:
 
         if (mode == MODE_DRUM)
         {
+            noteOnDrum(channel, note, velocity);
             return;
         }
 

@@ -5,6 +5,12 @@
 
 #define DRUM_PATTERN_COUNT 7
 
+// let start at 23 just because :p but also because END is 1 and 0 is used for pause
+#define KICK 23
+#define SNARE 24
+#define HITHAT 25
+#define MISC 26
+
 Pattern drumPatterns[] = {
     (Pat){{KICK}, {0}, {0}, {0}, {END}},
     (Pat){{KICK}, {0}, {HITHAT}, {0}, {END}},

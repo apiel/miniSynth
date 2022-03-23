@@ -120,11 +120,6 @@
 #define _A_8 118
 #define _B8 119
 
-#define MISC 124
-#define KICK 123
-#define SNARE 122
-#define HITHAT 121
-
 const char* getNoteStr(byte initialNote) {
     const char* noteNames[] = {"C",  "C#", "D",  "D#", "E",  "F",
                                "F#", "G",  "G#", "A",  "A#", "B"};

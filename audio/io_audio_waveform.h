@@ -70,9 +70,8 @@ public:
             return "Band sqaure";
         case 12:
             return "Band pulse";
-        default:
-            return "unknown yet";
         }
+        return "Unknown";
     }
 };
 

@@ -51,6 +51,8 @@ public:
     byte currentPattern = 0;
     Pattern *pattern;
 
+    byte padPressed = 0;
+
     // for the moment will always be arpMode
     bool arpMode = true;
 
@@ -67,7 +69,6 @@ public:
 
     const char *getModeName()
     {
-
         switch (mode)
         {
         case MODE_MAIN_ARP:
@@ -80,9 +81,8 @@ public:
             return "Drums";
         case MODE_LOCK:
             return "Locked";
-        default:
-            return "unknown yet";
         }
+        return "Unknown";
     }
 };
 
