@@ -5,15 +5,19 @@
 
 #include "./io_controller_akai_mpk_mini_main.h"
 #include "./io_controller_akai_mpk_mini_edit_synth.h"
+#include "./io_controller_akai_mpk_mini_drums.h"
 
-class IO_ControllerAkaiMPKmini : IO_ControllerAkaiMPKminiMain, IO_ControllerAkaiMPKminiEditSynth
+class IO_ControllerAkaiMPKmini : IO_ControllerAkaiMPKminiMain,
+                                 IO_ControllerAkaiMPKminiEditSynth,
+                                 IO_ControllerAkaiMPKminiDrums
 {
 public:
-    IO_ControllerAkaiMPKmini(IO_Display *_display, IO_AudioLoop **_loops, IO_AudioSynth **_synths)
+    IO_ControllerAkaiMPKmini(IO_Display *_display, IO_AudioLoop **_loops, IO_AudioSynth **_synths, IO_DrumMachine *_drums)
     {
         display = _display;
         loops = _loops;
         synths = _synths;
+        drums = _drums;
         loop = getLoop(0);
         synth = getSynth(0);
     }
@@ -34,6 +38,11 @@ public:
         if (mode == MODE_LOCK)
         {
             display->displayString("Mode", getModeName());
+            return;
+        }
+
+        if (mode == MODE_DRUM)
+        {
             return;
         }
 
@@ -102,6 +111,12 @@ public:
         if (mode == MODE_LOCK)
         {
             display->displayString("Mode", getModeName());
+            return;
+        }
+
+        if (mode == MODE_DRUM)
+        {
+            noteOffDrum(channel, note, velocity);
             return;
         }
 

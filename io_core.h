@@ -19,9 +19,9 @@ IO_AudioLoop loop2(&synths[SYNTH_2], SYNTH_2);
 IO_AudioLoop loop3(&synths[SYNTH_3], SYNTH_3);
 IO_AudioLoop *loopsPtr[SYNTH_COUNT] = {&loop0, &loop1, &loop2, &loop3};
 
-IO_ControllerAkaiMPKmini controller(&display, loopsPtr, synthsPtr);
-
 IO_DrumMachine drumMachine;
+
+IO_ControllerAkaiMPKmini controller(&display, loopsPtr, synthsPtr, &drumMachine);
 
 AudioOutputMQS audioOut;
 AudioMixer4 mixerOutput;

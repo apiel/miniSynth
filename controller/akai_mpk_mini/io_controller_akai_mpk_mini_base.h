@@ -6,6 +6,7 @@
 
 #include "../../audio/io_audio_synth.h"
 #include "../../io_audio_loop.h"
+#include "../../io_drum_machine.h"
 #include "../../io_instrument_list.h"
 #include "../../io_display.h"
 
@@ -24,6 +25,7 @@ enum
     MODE_MAIN_ARP,
     MODE_MAIN_SYNTH,
     MODE_EDIT_SYNTH,
+    MODE_DRUM,
     MODE_LOCK,
     MODE_COUNT
 };
@@ -40,6 +42,7 @@ public:
 
     IO_AudioLoop *loop;
     IO_AudioSynth *synth;
+    IO_DrumMachine *drums;
 
     IO_Display *display;
 
@@ -73,6 +76,8 @@ public:
             return "Live synth";
         case MODE_EDIT_SYNTH:
             return "Edit synth";
+        case MODE_DRUM:
+            return "Drums";
         case MODE_LOCK:
             return "Locked";
         default:

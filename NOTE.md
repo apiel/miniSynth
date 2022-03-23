@@ -9,6 +9,8 @@
     - key can also select drum sound
     - the same as for pattern, a pot should be able to select starting point
 
+- poly drum with AudioPlayMemory -> IO_DrumMachineMem
+
 - mode filter that can change filter from the 4 voice
 
 - should all the / 127.0f be / 128.0f ?
