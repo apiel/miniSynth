@@ -8,6 +8,8 @@
 #include "Pattern.h"
 #include "io_drum_patterns.h"
 
+#define DRUM_FILE_LEN 40
+
 enum
 {
     DRUM_KICK,
@@ -20,7 +22,7 @@ enum
 class IO_DrumMachine
 {
 protected:
-    char file[DRUM_TYPE_COUNT][40];
+    char file[DRUM_TYPE_COUNT][DRUM_FILE_LEN];
 
     byte currentStep = 0;
     Step lastStep;
@@ -33,6 +35,8 @@ public:
 
     Pattern *nextPattern = &drumPatterns[0];
     Pattern *pattern = &drumPatterns[0];
+
+    char lastSetFile[DRUM_FILE_LEN];
 
     // should we use AudioPlayMemory to be able to play multiple sound at once
     // maybe create IO_DrumMachineMem
@@ -54,10 +58,10 @@ public:
             Serial.println("SD card ready");
         }
 
-        sprintf(file[DRUM_KICK], "raw/kick/kick003.raw");
-        sprintf(file[DRUM_SNARE], "raw/snare/snare1.raw");
-        sprintf(file[DRUM_HITHAT], "raw/hithat/hithat1.raw");
-        sprintf(file[DRUM_MISC], "raw/misc/guitar2.raw");
+        setDrum(DRUM_KICK, 0);
+        setDrum(DRUM_SNARE, 0);
+        setDrum(DRUM_HITHAT, 0);
+        setDrum(DRUM_MISC, 0);
     }
 
     void setNextPattern(byte value)
@@ -65,9 +69,38 @@ public:
         nextPattern = &drumPatterns[value % DRUM_PATTERN_COUNT];
     }
 
-    void setDrum(byte drumType, byte value)
+    bool setDrum(byte drumType, byte value)
     {
-        Serial.printf("set drum %d -> %d\n", drumType, value);
+        File root = SD.open(getFolder(drumType));
+        if (root)
+        {
+            byte i = 0;
+            while (true)
+            {
+                File entry = root.openNextFile();
+                if (!entry)
+                {
+                    break;
+                }
+                if (!entry.isDirectory())
+                {
+                    // Serial.printf("File %s\n", entry.name());
+                    if (i == value)
+                    {
+                        snprintf(file[drumType], DRUM_FILE_LEN, "%s/%s", getFolder(drumType), entry.name());
+                        snprintf(lastSetFile, DRUM_FILE_LEN, entry.name());
+                        // Serial.printf("SET File %s\n", file[drumType]);
+                        entry.close();
+                        root.close();
+                        return true;
+                    }
+                    i++;
+                }
+                entry.close();
+            }
+            root.close();
+        }
+        return false;
     }
 
     void next()
@@ -123,6 +156,25 @@ public:
             return "Misc";
         }
         return "Unknown";
+    }
+
+    const char *getFolder(byte drumType)
+    {
+        switch (drumType)
+        {
+        case DRUM_KICK:
+            return "raw/kick";
+
+        case DRUM_SNARE:
+            return "raw/snare";
+
+        case DRUM_HITHAT:
+            return "raw/hithat";
+
+        case DRUM_MISC:
+            return "raw/misc";
+        }
+        return "";
     }
 };
 
