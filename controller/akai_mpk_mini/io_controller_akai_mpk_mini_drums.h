@@ -47,7 +47,7 @@ public:
         }
         else if (padPressed)
         {
-            byte drumType = DRUM_KICK + (padPressed - PAD_6);
+            byte drumType = DRUM_KICK + (padPressed - PAD_5);
             drums->setDrum(drumType, note - 48);
         }
         else

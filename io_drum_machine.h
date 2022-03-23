@@ -79,7 +79,6 @@ public:
             if (step->note == KICK && !mute[DRUM_KICK])
             {
                 sample.play(file[DRUM_KICK]);
-                Serial.printf("Play kick %s\n", file[DRUM_KICK]);
             }
             else if (step->note == SNARE && !mute[DRUM_SNARE])
             {
