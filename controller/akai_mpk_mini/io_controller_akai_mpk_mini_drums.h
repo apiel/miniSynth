@@ -48,9 +48,10 @@ public:
         else if (padPressed)
         {
             byte drumType = DRUM_KICK + (padPressed - PAD_5);
-            if (drums->setDrum(drumType, note - 48))
+            char *file = drums->setDrum(drumType, note - 48);
+            if (file)
             {
-                display->displayString(drums->getDrumName(drumType), drums->lastSetFile);
+                display->displayString(drums->getDrumName(drumType), file);
             }
             else
             {

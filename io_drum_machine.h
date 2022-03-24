@@ -9,6 +9,7 @@
 #include "io_drum_patterns.h"
 
 #define DRUM_FILE_LEN 40
+#define DRUM_DIR_LEN 25 // could be more but let's stick to the number of key on the keyboard
 
 enum
 {
@@ -22,7 +23,8 @@ enum
 class IO_DrumMachine
 {
 protected:
-    char file[DRUM_TYPE_COUNT][DRUM_FILE_LEN];
+    char file[DRUM_TYPE_COUNT][DRUM_DIR_LEN][DRUM_FILE_LEN];
+    char *currentFile[DRUM_TYPE_COUNT] = {NULL, NULL, NULL, NULL};
 
     byte currentStep = 0;
     Step lastStep;
@@ -35,8 +37,6 @@ public:
 
     Pattern *nextPattern = &drumPatterns[0];
     Pattern *pattern = &drumPatterns[0];
-
-    char lastSetFile[DRUM_FILE_LEN];
 
     // should we use AudioPlayMemory to be able to play multiple sound at once
     // maybe create IO_DrumMachineMem
@@ -56,12 +56,43 @@ public:
         else
         {
             Serial.println("SD card ready");
-        }
+            loadDir(DRUM_KICK);
+            loadDir(DRUM_SNARE);
+            loadDir(DRUM_HITHAT);
+            loadDir(DRUM_MISC);
 
-        setDrum(DRUM_KICK, 0);
-        setDrum(DRUM_SNARE, 0);
-        setDrum(DRUM_HITHAT, 0);
-        setDrum(DRUM_MISC, 0);
+            setDrum(DRUM_KICK, 0);
+            setDrum(DRUM_SNARE, 0);
+            setDrum(DRUM_HITHAT, 0);
+            setDrum(DRUM_MISC, 0);
+        }
+    }
+
+    void loadDir(byte drumType)
+    {
+        File root = SD.open(getFolder(drumType));
+        if (root)
+        {
+            for (byte i = 0; i < DRUM_DIR_LEN; i++)
+            {
+                File entry = root.openNextFile();
+                if (!entry)
+                {
+                    // still set all the empty places
+                    for (; i < DRUM_DIR_LEN; i++)
+                    {
+                        file[drumType][i][0] = '\0';
+                    }
+                    break;
+                }
+                if (!entry.isDirectory())
+                {
+                    snprintf(file[drumType][i], DRUM_FILE_LEN, "%s/%s", getFolder(drumType), entry.name());
+                }
+                entry.close();
+            }
+            root.close();
+        }
     }
 
     void setNextPattern(byte value)
@@ -69,38 +100,14 @@ public:
         nextPattern = &drumPatterns[value % DRUM_PATTERN_COUNT];
     }
 
-    bool setDrum(byte drumType, byte value)
+    char * setDrum(byte drumType, byte value)
     {
-        File root = SD.open(getFolder(drumType));
-        if (root)
+        if (file[drumType][value % DRUM_DIR_LEN][0] != '\0')
         {
-            byte i = 0;
-            while (true)
-            {
-                File entry = root.openNextFile();
-                if (!entry)
-                {
-                    break;
-                }
-                if (!entry.isDirectory())
-                {
-                    // Serial.printf("File %s\n", entry.name());
-                    if (i == value)
-                    {
-                        snprintf(file[drumType], DRUM_FILE_LEN, "%s/%s", getFolder(drumType), entry.name());
-                        snprintf(lastSetFile, DRUM_FILE_LEN, entry.name());
-                        // Serial.printf("SET File %s\n", file[drumType]);
-                        entry.close();
-                        root.close();
-                        return true;
-                    }
-                    i++;
-                }
-                entry.close();
-            }
-            root.close();
+            currentFile[drumType] = &file[drumType][value % DRUM_DIR_LEN][0];
+            return &file[drumType][value % DRUM_DIR_LEN][0] + strlen(getFolder(drumType)) + 1;
         }
-        return false;
+        return NULL;
     }
 
     void next()
@@ -109,21 +116,21 @@ public:
         if (step->note > 0)
         {
             // note will define which drum type kick, hh, snar, ...
-            if (step->note == KICK && !mute[DRUM_KICK])
+            if (step->note == KICK && !mute[DRUM_KICK] && currentFile[DRUM_KICK])
             {
-                sample.play(file[DRUM_KICK]);
+                sample.play(currentFile[DRUM_KICK]);
             }
-            else if (step->note == SNARE && !mute[DRUM_SNARE])
+            else if (step->note == SNARE && !mute[DRUM_SNARE] && currentFile[DRUM_SNARE])
             {
-                sample.play(file[DRUM_SNARE]);
+                sample.play(currentFile[DRUM_SNARE]);
             }
-            else if (step->note == HITHAT && !mute[DRUM_HITHAT])
+            else if (step->note == HITHAT && !mute[DRUM_HITHAT] && currentFile[DRUM_HITHAT])
             {
-                sample.play(file[DRUM_HITHAT]);
+                sample.play(currentFile[DRUM_HITHAT]);
             }
-            else if (step->note == MISC && !mute[DRUM_MISC])
+            else if (step->note == MISC && !mute[DRUM_MISC] && currentFile[DRUM_MISC])
             {
-                sample.play(file[DRUM_MISC]);
+                sample.play(currentFile[DRUM_MISC]);
             }
         }
         currentStep = (currentStep + 1) % pattern->stepCount;
